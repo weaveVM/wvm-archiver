@@ -17,7 +17,7 @@ async fn main() {
     let brotli_res = Block::brotli_compress(&borsh_res);
     println!("borsh vec length: {:?}", borsh_res.len());
     println!("brotli vec length: {:?}", brotli_res.len());
-    let abc = vec![1,2];
+
     let _ = test_send(brotli_res).await;
     // if let Ok(Some(block_result)) = block {
     //     println!("{:?}", block_result);

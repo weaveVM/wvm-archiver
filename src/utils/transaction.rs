@@ -11,7 +11,7 @@ pub async fn test_send(block_data: Vec<u8>) -> Result<(), Box<dyn std::error::Er
     let private_key = get_env_var("archiver_pk").unwrap();
     let wallet: LocalWallet = private_key
         .parse::<LocalWallet>()?
-        .with_chain_id(network.chain_id); 
+        .with_chain_id(network.wvm_chain_id); 
     let client = SignerMiddleware::new(provider.clone(), wallet.clone());
 
     let address_from = network.archiver_address.parse::<Address>()?;

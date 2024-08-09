@@ -10,7 +10,8 @@ use crate::utils::env_var::get_env_var;
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Network {
     pub name: String,
-    pub chain_id: u32,
+    pub network_chain_id: u32,
+    pub wvm_chain_id: u32,
     pub network_rpc: String,
     pub wvm_rpc: String,
     pub block_time: u32,
