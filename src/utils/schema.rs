@@ -5,6 +5,7 @@ use ethers_providers::{Http, Provider};
 use std::convert::TryFrom;
 use serde_json::Value;
 use borsh_derive::{BorshDeserialize, BorshSerialize};
+use crate::utils::env_var::get_env_var;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Network {
@@ -20,7 +21,8 @@ pub struct Network {
 
 impl Network {
     pub fn config() -> Network {
-        let mut file = File::open("./config.json").unwrap();
+        let network_config = get_env_var("network").unwrap();
+        let mut file = File::open(network_config).unwrap();
         let mut data = String::new();
         
         file.read_to_string(&mut data).unwrap();
