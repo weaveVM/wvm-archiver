@@ -10,7 +10,8 @@ use borsh_derive::{BorshDeserialize, BorshSerialize};
 pub struct Network {
     pub name: String,
     pub chain_id: u32,
-    pub rpc: String,
+    pub network_rpc: String,
+    pub wvm_rpc: String,
     pub block_time: u32,
     pub start_block: u32,
     pub archiver_address: String,
@@ -30,11 +31,20 @@ impl Network {
         network       
     }
 
-    pub async fn provider(&self) -> Provider<Http> {
+    pub async fn provider(&self, rpc: bool) -> Provider<Http> {
+        let target_rpc: &String;
+
         let network: Network = Self::config();
-        println!("{:#?}", network);
+        if rpc {
+            target_rpc = &network.wvm_rpc;
+        } else {
+            target_rpc = &network.network_rpc
+        }
+
+        println!("TARGET RPC {}", target_rpc);
+        println!("{:#?}", &network);
         let provider: Provider<Http> = Provider::<Http>::try_from(
-            network.rpc
+            target_rpc
         ).expect("could not instantiate HTTP Provider");
     
         provider
