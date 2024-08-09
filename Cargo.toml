@@ -1,0 +1,16 @@
+[package]
+name = "wvm-archiver"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+borsh = "1.5.1"
+borsh-derive = "1.5.1"
+brotli = "6.0.0"
+dotenv = "0.15.0"
+ethers = "2.0.14"
+ethers-core = "2.0.14"
+ethers-providers = "2.0.14"
+serde = "1.0.205"
+serde_json = "1.0.122"
+tokio = { version = "1.39.2", features = ["full"] }
