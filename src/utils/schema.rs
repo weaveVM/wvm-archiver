@@ -5,12 +5,15 @@ use ethers_providers::{Http, Provider};
 use std::convert::TryFrom;
 use serde_json::Value;
 use borsh_derive::{BorshDeserialize, BorshSerialize};
+use crate::utils::env_var::get_env_var;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Network {
     pub name: String,
-    pub chain_id: u32,
-    pub rpc: String,
+    pub network_chain_id: u32,
+    pub wvm_chain_id: u32,
+    pub network_rpc: String,
+    pub wvm_rpc: String,
     pub block_time: u32,
     pub start_block: u32,
     pub archiver_address: String,
@@ -19,7 +22,8 @@ pub struct Network {
 
 impl Network {
     pub fn config() -> Network {
-        let mut file = File::open("./config.json").unwrap();
+        let network_config = get_env_var("network").unwrap();
+        let mut file = File::open(network_config).unwrap();
         let mut data = String::new();
         
         file.read_to_string(&mut data).unwrap();
@@ -30,11 +34,20 @@ impl Network {
         network       
     }
 
-    pub async fn provider(&self) -> Provider<Http> {
+    pub async fn provider(&self, rpc: bool) -> Provider<Http> {
+        let target_rpc: &String;
+
         let network: Network = Self::config();
-        println!("{:#?}", network);
+        if rpc {
+            target_rpc = &network.wvm_rpc;
+        } else {
+            target_rpc = &network.network_rpc
+        }
+
+        println!("TARGET RPC {}", target_rpc);
+        println!("{:#?}", &network);
         let provider: Provider<Http> = Provider::<Http>::try_from(
-            network.rpc
+            target_rpc
         ).expect("could not instantiate HTTP Provider");
     
         provider
