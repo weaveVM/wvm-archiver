@@ -16,8 +16,9 @@ pub async fn send_wvm_calldata(block_data: Vec<u8>) -> Result<(), Box<dyn std::e
 
     let address_from = network.archiver_address.parse::<Address>()?;
     let address_to = network.archive_pool_address.parse::<Address>()?;
-    
+    // check archiver tWVM balance (non-zero)
     assert_non_zero_balance(&provider, &address_from).await;
+    // send calldata tx to WeaveVM
     send_transaction(&client, &address_from, &address_to, block_data).await?;
 
     Ok(())

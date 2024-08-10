@@ -1,6 +1,5 @@
 use crate::utils::archive_block::archive;
 use crate::utils::schema::Network;
-
 use std::thread;
 use std::time::Duration;
 
