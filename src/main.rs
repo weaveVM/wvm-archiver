@@ -5,8 +5,8 @@ use crate::utils::schema::Block;
 mod utils;
 #[tokio::main]
 async fn main() {
-    let block = by_number(123820363).await;
-    println!("{:?}", block.as_ref().unwrap());
+    let block = by_number(18039936).await;
+    // println!("{:?}", block.as_ref().unwrap());
     let x = serde_json::json!(block.as_ref().unwrap());
     println!("{:?}", x);
     let y = Block::load_block_from_value(x).unwrap();

@@ -59,10 +59,10 @@ impl Network {
 #[derive(Debug, Deserialize, Serialize, BorshSerialize, BorshDeserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct Block {
-    pub base_fee_per_gas: String,           // "baseFeePerGas"
-    pub blob_gas_used: String,              // "blobGasUsed"
+    pub base_fee_per_gas: Option<String>,   // "baseFeePerGas"
+    pub blob_gas_used: Option<String>,      // "blobGasUsed"
     pub difficulty: String,                 // "difficulty"
-    pub excess_blob_gas: String,            // "excessBlobGas"
+    pub excess_blob_gas: Option<String>,            // "excessBlobGas"
     pub extra_data: String,                 // "extraData"
     pub gas_limit: String,                  // "gasLimit"
     pub gas_used: String,                   // "gasUsed"
@@ -72,7 +72,7 @@ pub struct Block {
     pub mix_hash: String,                   // "mixHash"
     pub nonce: String,                      // "nonce"
     pub number: String,                     // "number"
-    pub parent_beacon_block_root: String,   // "parentBeaconBlockRoot"
+    pub parent_beacon_block_root: Option<String>,   // "parentBeaconBlockRoot"
     pub parent_hash: String,                // "parentHash"
     pub receipts_root: String,              // "receiptsRoot"
     pub seal_fields: Vec<String>,           // "sealFields" as an array of strings
