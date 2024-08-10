@@ -5,6 +5,7 @@ use ethers_providers::{Http, Provider};
 use std::convert::TryFrom;
 use serde_json::Value;
 use borsh_derive::{BorshDeserialize, BorshSerialize};
+use borsh::to_vec;
 use crate::utils::env_var::get_env_var;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -96,4 +97,8 @@ impl Block {
         writer.write_all(input).unwrap();
         writer.into_inner()
     }
+
+    pub fn borsh_ser(input: &Block) -> Vec<u8> {
+        to_vec(input).unwrap()
+    } 
 }
