@@ -5,7 +5,7 @@ use ethers::{utils, prelude::*};
 
 type Client = SignerMiddleware<Provider<Http>, Wallet<k256::ecdsa::SigningKey>>;
 
-pub async fn test_send(block_data: Vec<u8>) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn send_wvm_calldata(block_data: Vec<u8>) -> Result<(), Box<dyn std::error::Error>> {
     let network = Network::config();
     let provider = Network::provider(&network, true).await;
     let private_key = get_env_var("archiver_pk").unwrap();
@@ -17,7 +17,7 @@ pub async fn test_send(block_data: Vec<u8>) -> Result<(), Box<dyn std::error::Er
     let address_from = network.archiver_address.parse::<Address>()?;
     let address_to = network.archive_pool_address.parse::<Address>()?;
     
-    print_balances(&provider, &address_from, &address_to).await?;
+    // print_balances(&provider, &address_from, &address_to).await?;
     send_transaction(&client, &address_from, &address_to, block_data).await?;
 
     Ok(())
@@ -34,7 +34,7 @@ async fn print_balances(provider: &Provider<Http>, address_from: &Address, addre
 
 async fn send_transaction(client: &Client, address_from: &Address, address_to: &Address, block_data: Vec<u8>) -> Result<(), Box<dyn std::error::Error>> {
     println!(
-        "archiving block data from archiver: {} to archive pool: {}.",
+        "\nArchiving block data from archiver: {} to archive pool: {}",
         address_from, address_to
     );
     let tx = TransactionRequest::new()
@@ -42,9 +42,11 @@ async fn send_transaction(client: &Client, address_from: &Address, address_to: &
         .value(U256::from(utils::parse_ether(0)?))
         .from(address_from.clone())
         .data(block_data);
-    println!("{:?}", tx);
+
     let tx = client.send_transaction(tx, None).await?.await?;
-    println!("Transaction Receipt: {}", serde_json::to_string(&tx)?);
+    let json_tx = serde_json::json!(tx);
+    println!("\nWeaveVM Archiving TXID: {}", json_tx["transactionHash"]);
 
     Ok(())
 }
+

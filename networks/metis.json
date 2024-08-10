@@ -1,0 +1,11 @@
+{
+    "name": "Metis",
+    "network_chain_id": 1088,
+    "wvm_chain_id": 9999777,
+    "network_rpc": "https://andromeda.metis.io/?owner=1088",
+    "wvm_rpc": "https://testnet-rpc.wvm.dev",
+    "block_time": 9,
+    "start_block": 18039936,
+    "archiver_address": "0x197f818c1313DC58b32D88078ecdfB40EA822614",
+    "archive_pool_address": "0xa2A0D977847805fE224B789D8C4d3D711ab251e7"
+}

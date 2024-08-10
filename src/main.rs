@@ -1,25 +1,27 @@
-use crate::utils::get_block::by_number;
-use crate::utils::transaction::test_send;
-use borsh::to_vec;
-use crate::utils::schema::Block;
+use ethers_core::k256::pkcs8::der::asn1::Null;
+
+use crate::utils::archive_block::archive;
+use crate::utils::schema::Network;
+
+use std::thread;
+use std::time::Duration;
 
 mod utils;
 #[tokio::main]
 async fn main() {
-    // test_send().await;
-    let block = by_number(123820363).await;
-    // let res = Some(Block {block.unwrap()});
-    println!("{:?}", block.as_ref().unwrap());
-    let x = serde_json::json!(block.as_ref().unwrap());
-    println!("{:?}", x);
-    let y = Block::load_block_from_value(x).unwrap();
-    let borsh_res = to_vec(&y).unwrap();
-    let brotli_res = Block::brotli_compress(&borsh_res);
-    println!("borsh vec length: {:?}", borsh_res.len());
-    println!("brotli vec length: {:?}", brotli_res.len());
+    let network = Network::config();
+    let block_time = network.block_time;
+    let mut start_block = network.start_block;
 
-    let _ = test_send(brotli_res).await;
-    // if let Ok(Some(block_result)) = block {
-    //     println!("{:?}", block_result);
-    // }
+    println!("\n{:#?}\n\n", network);
+
+    // poll block & archive
+    loop {
+        println!("\n{}", "#".repeat(100));
+        println!("\nARCHIVING BLOCK #{} of Network {} -- ChainId: {}\n", start_block, network.name, network.network_chain_id);
+        archive(Some(start_block)).await;
+        start_block += 1;
+        println!("\n{}", "#".repeat(100));
+        thread::sleep(Duration::from_secs(block_time.into()));
+    }
 }

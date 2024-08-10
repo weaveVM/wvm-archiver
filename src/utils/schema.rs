@@ -5,6 +5,7 @@ use ethers_providers::{Http, Provider};
 use std::convert::TryFrom;
 use serde_json::Value;
 use borsh_derive::{BorshDeserialize, BorshSerialize};
+use borsh::to_vec;
 use crate::utils::env_var::get_env_var;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -15,7 +16,7 @@ pub struct Network {
     pub network_rpc: String,
     pub wvm_rpc: String,
     pub block_time: u32,
-    pub start_block: u32,
+    pub start_block: u64, // as per ethers_provider
     pub archiver_address: String,
     pub archive_pool_address: String
 }
@@ -43,9 +44,6 @@ impl Network {
         } else {
             target_rpc = &network.network_rpc
         }
-
-        println!("TARGET RPC {}", target_rpc);
-        println!("{:#?}", &network);
         let provider: Provider<Http> = Provider::<Http>::try_from(
             target_rpc
         ).expect("could not instantiate HTTP Provider");
@@ -58,29 +56,29 @@ impl Network {
 #[derive(Debug, Deserialize, Serialize, BorshSerialize, BorshDeserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct Block {
-    pub base_fee_per_gas: String,           // "baseFeePerGas"
-    pub blob_gas_used: String,              // "blobGasUsed"
-    pub difficulty: String,                 // "difficulty"
-    pub excess_blob_gas: String,            // "excessBlobGas"
-    pub extra_data: String,                 // "extraData"
-    pub gas_limit: String,                  // "gasLimit"
-    pub gas_used: String,                   // "gasUsed"
-    pub hash: String,                       // "hash"
-    pub logs_bloom: String,                 // "logsBloom"
-    pub miner: String,                      // "miner"
-    pub mix_hash: String,                   // "mixHash"
-    pub nonce: String,                      // "nonce"
-    pub number: String,                     // "number"
-    pub parent_beacon_block_root: String,   // "parentBeaconBlockRoot"
-    pub parent_hash: String,                // "parentHash"
-    pub receipts_root: String,              // "receiptsRoot"
-    pub seal_fields: Vec<String>,           // "sealFields" as an array of strings
-    pub sha3_uncles: String,                // "sha3Uncles"
-    pub size: String,                       // "size"
-    pub state_root: String,                 // "stateRoot"
-    pub timestamp: String,                  // "timestamp"
-    pub total_difficulty: String,           // "totalDifficulty"
-    pub transactions: Vec<String>,          // "transactions" as an array of strings
+    pub base_fee_per_gas: Option<String>,           // "baseFeePerGas"
+    pub blob_gas_used: Option<String>,              // "blobGasUsed"
+    pub difficulty: String,                         // "difficulty"
+    pub excess_blob_gas: Option<String>,            // "excessBlobGas"
+    pub extra_data: String,                         // "extraData"
+    pub gas_limit: String,                          // "gasLimit"
+    pub gas_used: String,                           // "gasUsed"
+    pub hash: String,                               // "hash"
+    pub logs_bloom: String,                         // "logsBloom"
+    pub miner: String,                              // "miner"
+    pub mix_hash: String,                           // "mixHash"
+    pub nonce: String,                              // "nonce"
+    pub number: String,                             // "number"
+    pub parent_beacon_block_root: Option<String>,   // "parentBeaconBlockRoot"
+    pub parent_hash: String,                        // "parentHash"
+    pub receipts_root: String,                      // "receiptsRoot"
+    pub seal_fields: Vec<String>,                   // "sealFields" as an array of strings
+    pub sha3_uncles: String,                        // "sha3Uncles"
+    pub size: String,                               // "size"
+    pub state_root: String,                         // "stateRoot"
+    pub timestamp: String,                          // "timestamp"
+    pub total_difficulty: String,                   // "totalDifficulty"
+    pub transactions: Vec<String>,                  // "transactions" as an array of strings
 }
 
 impl Block {
@@ -96,4 +94,8 @@ impl Block {
         writer.write_all(input).unwrap();
         writer.into_inner()
     }
+
+    pub fn borsh_ser(input: &Block) -> Vec<u8> {
+        to_vec(input).unwrap()
+    } 
 }
