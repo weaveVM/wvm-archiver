@@ -1,5 +1,3 @@
-use ethers_core::k256::pkcs8::der::asn1::Null;
-
 use crate::utils::archive_block::archive;
 use crate::utils::schema::Network;
 

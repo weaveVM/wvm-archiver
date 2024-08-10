@@ -17,19 +17,15 @@ pub async fn send_wvm_calldata(block_data: Vec<u8>) -> Result<(), Box<dyn std::e
     let address_from = network.archiver_address.parse::<Address>()?;
     let address_to = network.archive_pool_address.parse::<Address>()?;
     
-    // print_balances(&provider, &address_from, &address_to).await?;
+    assert_non_zero_balance(&provider, &address_from).await;
     send_transaction(&client, &address_from, &address_to, block_data).await?;
 
     Ok(())
 }
 
-async fn print_balances(provider: &Provider<Http>, address_from: &Address, address_to: &Address) -> Result<(), Box<dyn std::error::Error>> {
-    let balance_from = provider.get_balance(address_from.clone(), None).await?;
-    let balance_to = provider.get_balance(address_to.clone(), None).await?;
-
-    println!("{} balance: {} tWVM", address_from, balance_from);
-    println!("{} balance: {} tWVM", address_to, balance_to);
-    Ok(())
+async fn assert_non_zero_balance(provider: &Provider<Http>, address: &Address) {
+    let balance = provider.get_balance(address.clone(), None).await.unwrap();
+    assert!(balance > 0.into());
 }
 
 async fn send_transaction(client: &Client, address_from: &Address, address_to: &Address, block_data: Vec<u8>) -> Result<(), Box<dyn std::error::Error>> {
