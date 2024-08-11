@@ -1,0 +1,65 @@
+<p align="center">
+  <a href="https://wvm.dev">
+    <img src="https://raw.githubusercontent.com/weaveVM/.github/main/profile/bg.png">
+  </a>
+</p>
+
+## About
+WeaveVM Archiver is an ETL archive pipeline for EVM networks. It's the simplest way to interface with WeaveVM's permanent data feature without smart contract redeployments.
+
+## Build & Run
+
+```bash
+git clone https://github.com/weaveVM/wvm-archiver.git
+
+cd wvm-archiver
+
+cargo shuttle run
+```
+
+### Prerequisites & Dependencies
+
+While a WeaveVM Archiver node can run without web2 component dependencies, this node implementation uses [planetscale](https://planetscale.com) for cloud indexing (indexing target network block ID to WVM archive TXID) and [shuttle.rs](https://shuttle.rs) for backend hosting. Check [.env.example](./env.example) to set up your environment variables.
+
+```js
+archiver_pk="" // WeaveVM archiver PK
+network="./networks/your_network.json"
+
+DATABASE_HOST="" // planetscale
+DATABASE_USERNAME="" // planetscale
+DATABASE_PASSWORD="" // planetscale
+```
+
+### Add Your Network
+
+To start archiving your network block data on WeaveVM:
+
+1. Add your network config file to the [networks](./networks/) directory.
+2. Name your config file using snake_case syntax (e.g., `your_network_name.json`).
+3. Modify properties that don't have a `wvm_` prefix in the config JSON file.
+4. Fund your `archiver_address` with a sufficient amount of tWVM (1 MB costs ~ 5 cents). Check out WVM Faucet to claim $tWVM.
+5. Choose a unique `archive_pool_address` that's different from your `archiver_address`.
+6. Set up your PlanetScale DB according to `db_schema.sql`.
+
+## How it works
+
+The WeaveVM Archiver node operates as follows:
+
+1. It starts downloading the target EVM network block data from the RPC you provide in the network config file.
+2. The node begins pulling blocks from the `start_block` defined in the network's config file.
+3. The block data is then serialized in [borsh](https://borsh.io) format and compressed using Brotli.
+4. The serialized-compressed data is pushed to WeaveVM as calldata transaction from the `archiver_address` to the `archive_pool_address`.
+5. Simultaneously, the resulting TXID from pushing data to WeaveVM and the archived EVM block ID are indexed in the cloud for faster data retrieval.
+
+## Server Methods
+
+As mentioned, PlanetScale is used for cloud indexing, which allows a WeaveVM Archiver node to expose its WeaveVM data as a RESTful API.
+
+### Retrieve the WVM archive TXID for a given EVM block ID
+
+```bash
+curl -X GET https://your_app.shuttleapp.rs/block/$BLOCK_ID
+```
+
+## License
+This project is licensed under the [MIT License](./LICENSE)
