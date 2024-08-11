@@ -5,7 +5,7 @@ use ethers_providers::{Http, Provider};
 
 type Client = SignerMiddleware<Provider<Http>, Wallet<k256::ecdsa::SigningKey>>;
 
-pub async fn send_wvm_calldata(block_data: Vec<u8>) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn send_wvm_calldata(block_data: Vec<u8>) -> Result<String, Box<dyn std::error::Error>> {
     let network = Network::config();
     let provider = Network::provider(&network, true).await;
     let private_key = get_env_var("archiver_pk").unwrap();
@@ -19,9 +19,9 @@ pub async fn send_wvm_calldata(block_data: Vec<u8>) -> Result<(), Box<dyn std::e
     // check archiver tWVM balance (non-zero)
     assert_non_zero_balance(&provider, &address_from).await;
     // send calldata tx to WeaveVM
-    send_transaction(&client, &address_from, &address_to, block_data).await?;
+    let txid = send_transaction(&client, &address_from, &address_to, block_data).await?;
 
-    Ok(())
+    Ok(txid)
 }
 
 async fn assert_non_zero_balance(provider: &Provider<Http>, address: &Address) {

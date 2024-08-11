@@ -1,8 +1,9 @@
 use crate::utils::get_block::by_number;
 use crate::utils::schema::{Block, Network};
 use crate::utils::transaction::send_wvm_calldata;
+use anyhow::Error;
 
-pub async fn archive(block_number: Option<u64>) {
+pub async fn archive(block_number: Option<u64>) -> Result<String, Error> {
     let network = Network::config();
     let start_block = network.start_block;
     let block_to_archive = block_number.unwrap_or(start_block);
@@ -20,5 +21,6 @@ pub async fn archive(block_number: Option<u64>) {
     // println!("borsh vec length: {:?}", borsh_res.len());
     // println!("brotli vec length: {:?}", brotli_res.len());
 
-    let _ = send_wvm_calldata(brotli_res).await;
+    let txid = send_wvm_calldata(brotli_res).await.unwrap();
+    Ok(txid)
 }
