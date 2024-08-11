@@ -1,6 +1,7 @@
 use crate::utils::archive_block::archive;
 use crate::utils::schema::Network;
 use crate::utils::planetscale::{ps_archive_block, ps_get_latest_block_id};
+use crate::utils::server_handlers::{handle_block, weave_gm};
 use std::thread;
 use std::time::Duration;
 use axum::{routing::get, Router};
@@ -16,8 +17,10 @@ async fn main() -> shuttle_axum::ShuttleAxum {
     let mut start_block = ps_latest_archived_block;
 
     println!("\n{:#?}\n\n", network);
-
-    let router = Router::new().route("/", get(weave_gm));
+    // server routes
+    let router = Router::new()
+    .route("/", get(weave_gm))
+    .route("/block/:id", get(handle_block));
 
     // poll blocks & archive in parallel
     task::spawn(async move {
@@ -36,10 +39,5 @@ async fn main() -> shuttle_axum::ShuttleAxum {
     });
 
     Ok(router.into())
-}
-
-
-async fn weave_gm() -> &'static str {
-    "WeaveGM!"
 }
 

@@ -7,6 +7,7 @@ use serde_json::Value;
 use std::convert::TryFrom;
 use std::fs::File;
 use std::io::{Read, Write};
+use planetscale_driver::Database;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Network {
@@ -91,4 +92,10 @@ impl Block {
     pub fn borsh_ser(input: &Block) -> Vec<u8> {
         to_vec(input).unwrap()
     }
+}
+
+
+#[derive(Database, Debug, Serialize)]
+pub struct PsGetBlockTxid {
+    pub wvm_archive_txid : String
 }
