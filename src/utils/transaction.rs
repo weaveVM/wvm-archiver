@@ -1,38 +1,40 @@
-use crate::utils::schema::Network;
 use crate::utils::env_var::get_env_var;
-use ethers_providers::{Provider, Http};
-use ethers::{utils, prelude::*};
+use crate::utils::schema::Network;
+use ethers::{prelude::*, utils};
+use ethers_providers::{Http, Provider};
 
 type Client = SignerMiddleware<Provider<Http>, Wallet<k256::ecdsa::SigningKey>>;
 
-pub async fn send_wvm_calldata(block_data: Vec<u8>) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn send_wvm_calldata(block_data: Vec<u8>) -> Result<String, Box<dyn std::error::Error>> {
     let network = Network::config();
     let provider = Network::provider(&network, true).await;
     let private_key = get_env_var("archiver_pk").unwrap();
     let wallet: LocalWallet = private_key
         .parse::<LocalWallet>()?
-        .with_chain_id(network.wvm_chain_id); 
+        .with_chain_id(network.wvm_chain_id);
     let client = SignerMiddleware::new(provider.clone(), wallet.clone());
 
     let address_from = network.archiver_address.parse::<Address>()?;
     let address_to = network.archive_pool_address.parse::<Address>()?;
-    
-    // print_balances(&provider, &address_from, &address_to).await?;
-    send_transaction(&client, &address_from, &address_to, block_data).await?;
+    // check archiver tWVM balance (non-zero)
+    assert_non_zero_balance(&provider, &address_from).await;
+    // send calldata tx to WeaveVM
+    let txid = send_transaction(&client, &address_from, &address_to, block_data).await?;
 
-    Ok(())
+    Ok(txid)
 }
 
-async fn print_balances(provider: &Provider<Http>, address_from: &Address, address_to: &Address) -> Result<(), Box<dyn std::error::Error>> {
-    let balance_from = provider.get_balance(address_from.clone(), None).await?;
-    let balance_to = provider.get_balance(address_to.clone(), None).await?;
-
-    println!("{} balance: {} tWVM", address_from, balance_from);
-    println!("{} balance: {} tWVM", address_to, balance_to);
-    Ok(())
+async fn assert_non_zero_balance(provider: &Provider<Http>, address: &Address) {
+    let balance = provider.get_balance(address.clone(), None).await.unwrap();
+    assert!(balance > 0.into());
 }
 
-async fn send_transaction(client: &Client, address_from: &Address, address_to: &Address, block_data: Vec<u8>) -> Result<(), Box<dyn std::error::Error>> {
+async fn send_transaction(
+    client: &Client,
+    address_from: &Address,
+    address_to: &Address,
+    block_data: Vec<u8>,
+) -> Result<String, Box<dyn std::error::Error>> {
     println!(
         "\nArchiving block data from archiver: {} to archive pool: {}",
         address_from, address_to
@@ -45,8 +47,8 @@ async fn send_transaction(client: &Client, address_from: &Address, address_to: &
 
     let tx = client.send_transaction(tx, None).await?.await?;
     let json_tx = serde_json::json!(tx);
-    println!("\nWeaveVM Archiving TXID: {}", json_tx["transactionHash"]);
+    let txid = json_tx["transactionHash"].to_string();
 
-    Ok(())
+    println!("\nWeaveVM Archiving TXID: {}", txid);
+    Ok(txid)
 }
-

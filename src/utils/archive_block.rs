@@ -1,13 +1,13 @@
+use crate::utils::get_block::by_number;
 use crate::utils::schema::{Block, Network};
 use crate::utils::transaction::send_wvm_calldata;
-use crate::utils::get_block::by_number;
+use anyhow::Error;
 
-
-pub async fn archive(block_number: Option<u64>) {
+pub async fn archive(block_number: Option<u64>) -> Result<String, Error> {
     let network = Network::config();
     let start_block = network.start_block;
     let block_to_archive = block_number.unwrap_or(start_block);
-    
+
     // fetch block
     let block_data = by_number(block_to_archive).await.unwrap();
     // serialize response into Block struct
@@ -17,10 +17,10 @@ pub async fn archive(block_number: Option<u64>) {
     let borsh_res = Block::borsh_ser(&block_data_struct);
     // brotli compress the borsh serialized block
     let brotli_res = Block::brotli_compress(&borsh_res);
-    
+
     // println!("borsh vec length: {:?}", borsh_res.len());
     // println!("brotli vec length: {:?}", brotli_res.len());
 
-    let _ = send_wvm_calldata(brotli_res).await;
-
+    let txid = send_wvm_calldata(brotli_res).await.unwrap();
+    Ok(txid)
 }
