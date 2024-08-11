@@ -12,10 +12,13 @@ async fn main() {
 
     println!("\n{:#?}\n\n", network);
 
-    // poll block & archive
+    // poll blocks & archive
     loop {
         println!("\n{}", "#".repeat(100));
-        println!("\nARCHIVING BLOCK #{} of Network {} -- ChainId: {}\n", start_block, network.name, network.network_chain_id);
+        println!(
+            "\nARCHIVING BLOCK #{} of Network {} -- ChainId: {}\n",
+            start_block, network.name, network.network_chain_id
+        );
         archive(Some(start_block)).await;
         start_block += 1;
         println!("\n{}", "#".repeat(100));
