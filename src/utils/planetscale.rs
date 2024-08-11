@@ -1,9 +1,8 @@
-use std::net;
-
 use crate::utils::env_var::get_env_var;
-use crate::utils::schema::Network;
-use anyhow::Error;
+use crate::utils::schema::{Network, PsGetBlockTxid};
 use planetscale_driver::{PSConnection, query};
+use anyhow::Error;
+use serde_json::Value;
 
 async fn ps_init() -> PSConnection {
 
@@ -51,4 +50,18 @@ pub async fn ps_get_latest_block_id() -> u64 {
     // return latest archived block in planetscale + 1
     // so the process can start archiving from latest_archived + 1
     latest_archived + 1
+}
+
+pub async fn ps_get_archived_block_txid(id: u64) -> Value {
+    let conn = ps_init().await;
+
+    let query_formatted = format!("SELECT WeaveVMArchiveTxid FROM WeaveVMArchiver WHERE NetworkBlockId = {}", id);
+    let txid: PsGetBlockTxid = 
+    query(&query_formatted)
+    .fetch_one(&conn)
+    .await
+    .unwrap();
+
+    let res = serde_json::json!(txid);
+    res
 }
