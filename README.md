@@ -7,6 +7,15 @@
 ## About
 WeaveVM Archiver is an ETL archive pipeline for EVM networks. It's the simplest way to interface with WeaveVM's permanent data feature without smart contract redeployments.
 
+### WeaveVM Archiver Usage
+
+WeaveVM Archiver is the ideal choice if you want to:
+
+- Interface with WeaveVM's permanent data settlement and high-throughput DA
+- Maintain your current data settlement or DA architecture
+- Have an interface with WeaveVM without rollup smart contract redeployments
+- Avoid codebase refactoring
+
 ## Build & Run
 
 ```bash
