@@ -1,7 +1,7 @@
 {
     "name": "Optimism",
     "network_chain_id": 10,
-    "wvm_chain_id": 9999777,
+    "wvm_chain_id": 9496,
     "network_rpc": "https://mainnet.optimism.io",
     "wvm_rpc": "https://testnet-rpc.wvm.dev",
     "block_time": 2,
