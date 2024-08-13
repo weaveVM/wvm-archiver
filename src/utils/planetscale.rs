@@ -1,5 +1,3 @@
-use std::fmt::format;
-
 use crate::utils::env_var::get_env_var;
 use crate::utils::schema::{Network, PsGetBlockTxid, PsGetExtremeBlock};
 use anyhow::Error;
