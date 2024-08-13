@@ -29,6 +29,14 @@ async fn assert_non_zero_balance(provider: &Provider<Http>, address: &Address) {
     assert!(balance > 0.into());
 }
 
+pub async fn get_archiver_balance() -> U256 {
+    let network = Network::config();
+    let provider = Network::provider(&network, true).await;
+    let address = network.archiver_address.parse::<Address>().unwrap();
+    let balance = provider.get_balance(address, None).await.unwrap();
+    balance
+}
+
 async fn send_transaction(
     client: &Client,
     address_from: &Address,
