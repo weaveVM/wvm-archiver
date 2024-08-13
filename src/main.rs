@@ -20,7 +20,7 @@ async fn main() -> shuttle_axum::ShuttleAxum {
     // server routes
     let router = Router::new()
         .route("/", get(handle_weave_gm))
-        .route("/stats", get(handle_info))
+        .route("/info", get(handle_info))
         .route("/block/:id", get(handle_block));
 
     // poll blocks & archive in parallel
