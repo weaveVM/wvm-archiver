@@ -115,7 +115,7 @@ pub struct InfoServerResponse {
     archiver_address: String,
     network_name: String,
     network_chain_id: u32,
-    network_rpc: String
+    network_rpc: String,
 }
 
 impl InfoServerResponse {
@@ -133,7 +133,7 @@ impl InfoServerResponse {
             archiver_address: network.archiver_address,
             network_name: network.name,
             network_chain_id: network.network_chain_id,
-            network_rpc: network.network_rpc
+            network_rpc: network.network_rpc,
         };
         instance
     }
