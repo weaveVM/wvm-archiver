@@ -107,24 +107,33 @@ pub struct PsGetExtremeBlock {
 }
 
 #[derive(Debug, Serialize)]
-pub struct StatsServerResponse {
+pub struct InfoServerResponse {
     first_block: Option<u64>,
     last_block: Option<u64>,
     total_archived_blocks: u64,
     archiver_balance: U256,
+    archiver_address: String,
+    network_name: String,
+    network_chain_id: u32,
+    network_rpc: String
 }
 
-impl StatsServerResponse {
-    pub async fn new(first_block: Option<u64>, last_block: Option<u64>) -> StatsServerResponse {
+impl InfoServerResponse {
+    pub async fn new(first_block: Option<u64>, last_block: Option<u64>) -> InfoServerResponse {
+        let network = Network::config();
         let total_archived_blocks = last_block.unwrap_or(0) - first_block.unwrap_or(0);
         let archiver_balance = get_archiver_balance().await;
         let archiver_balance = Some(archiver_balance).unwrap();
 
-        let instance: StatsServerResponse = StatsServerResponse {
+        let instance: InfoServerResponse = InfoServerResponse {
+            archiver_balance,
             first_block,
             last_block,
             total_archived_blocks,
-            archiver_balance,
+            archiver_address: network.archiver_address,
+            network_name: network.name,
+            network_chain_id: network.network_chain_id,
+            network_rpc: network.network_rpc
         };
         instance
     }

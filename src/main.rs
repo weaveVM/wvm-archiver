@@ -1,7 +1,7 @@
 use crate::utils::archive_block::archive;
 use crate::utils::planetscale::{ps_archive_block, ps_get_latest_block_id};
 use crate::utils::schema::Network;
-use crate::utils::server_handlers::{handle_block, handle_stats, handle_weave_gm};
+use crate::utils::server_handlers::{handle_block, handle_info, handle_weave_gm};
 use axum::{routing::get, Router};
 use std::thread;
 use std::time::Duration;
@@ -20,7 +20,7 @@ async fn main() -> shuttle_axum::ShuttleAxum {
     // server routes
     let router = Router::new()
         .route("/", get(handle_weave_gm))
-        .route("/stats", get(handle_stats))
+        .route("/stats", get(handle_info))
         .route("/block/:id", get(handle_block));
 
     // poll blocks & archive in parallel
