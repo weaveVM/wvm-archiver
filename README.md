@@ -64,6 +64,26 @@ The WeaveVM Archiver node operates as follows:
 
 As mentioned, PlanetScale is used for cloud indexing, which allows a WeaveVM Archiver node to expose its WeaveVM data as a RESTful API.
 
+### WeaveVM Archiver node instance info
+
+```bash
+curl -X GET https://your_app.shuttleapp.rs/info
+```
+**returns:**
+
+```rs
+pub struct InfoServerResponse {
+    first_block: Option<u64>,
+    last_block: Option<u64>,
+    total_archived_blocks: u64,
+    archiver_balance: U256,
+    archiver_address: String,
+    network_name: String,
+    network_chain_id: u32,
+    network_rpc: String,
+}
+```
+
 ### Retrieve the WVM archive TXID for a given EVM block ID
 
 ```bash
