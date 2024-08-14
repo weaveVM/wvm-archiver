@@ -1,0 +1,11 @@
+{
+    "name": "RSS3 VSL Mainnet",
+    "network_chain_id": 12553,
+    "wvm_chain_id": 9496,
+    "network_rpc": "https://rpc.rss3.io",
+    "wvm_rpc": "https://testnet-rpc.wvm.dev",
+    "block_time": 2,
+    "start_block": 6888111,
+    "archiver_address": "0xA6dC883ea2A6acb576A933B4d38D13d6069d9fBE",
+    "archive_pool_address": "0x0000000000000000000000000000000000000000"
+}
