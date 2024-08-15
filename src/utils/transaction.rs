@@ -1,11 +1,11 @@
 use crate::utils::env_var::get_env_var;
-use crate::utils::schema::Network;
 use crate::utils::schema::Block;
+use crate::utils::schema::Network;
+use ethers::types::{Bytes, H256};
+use ethers::utils::hex;
 use ethers::{prelude::*, utils};
 use ethers_providers::{Http, Provider};
 use std::str::FromStr;
-use ethers::types::{H256, Bytes};
-use ethers::utils::hex;
 
 type Client = SignerMiddleware<Provider<Http>, Wallet<k256::ecdsa::SigningKey>>;
 
@@ -79,5 +79,4 @@ pub async fn decode_wvm_tx_data(txid: &str) -> Block {
     let borsh_derserialized = Block::borsh_der(brotli_decompressed);
     println!("{:?}", borsh_derserialized);
     borsh_derserialized
-
 }

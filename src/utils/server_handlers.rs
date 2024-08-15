@@ -1,7 +1,7 @@
 use crate::utils::planetscale::{ps_get_archived_block_txid, ps_get_blocks_extremes};
+use crate::utils::schema::Block;
 use crate::utils::schema::InfoServerResponse;
 use crate::utils::transaction::decode_wvm_tx_data;
-use crate::utils::schema::Block;
 use axum::{extract::Path, response::Json};
 use serde::de::value;
 use serde_json::Value;

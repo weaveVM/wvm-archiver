@@ -1,7 +1,7 @@
 use crate::utils::archive_block::archive;
 use crate::utils::planetscale::{ps_archive_block, ps_get_latest_block_id};
 use crate::utils::schema::Network;
-use crate::utils::server_handlers::{handle_block, handle_info, handle_weave_gm, handle_block_raw};
+use crate::utils::server_handlers::{handle_block, handle_block_raw, handle_info, handle_weave_gm};
 use axum::{routing::get, Router};
 use std::thread;
 use std::time::Duration;
