@@ -1,6 +1,6 @@
 use crate::utils::env_var::get_env_var;
 use crate::utils::transaction::get_archiver_balance;
-use borsh::to_vec;
+use borsh::{from_slice, to_vec};
 use borsh_derive::{BorshDeserialize, BorshSerialize};
 use ethers::types::U256;
 use ethers_providers::{Http, Provider};
@@ -91,8 +91,21 @@ impl Block {
         writer.write_all(input).unwrap();
         writer.into_inner()
     }
+    pub fn brotli_decompress(input: Vec<u8>) -> Vec<u8> {
+        let mut decompressed_data = Vec::new();
+        let mut decompressor = brotli::Decompressor::new(input.as_slice(), 4096); // 4096 is the buffer size
+
+        decompressor
+            .read_to_end(&mut decompressed_data)
+            .expect("Decompression failed");
+        decompressed_data
+    }
     pub fn borsh_ser(input: &Block) -> Vec<u8> {
         to_vec(input).unwrap()
+    }
+    pub fn borsh_der(input: Vec<u8>) -> Block {
+        let res: Block = from_slice(&input).expect("error deseriliazing the calldata");
+        res
     }
 }
 

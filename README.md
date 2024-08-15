@@ -90,5 +90,11 @@ pub struct InfoServerResponse {
 curl -X GET https://your_app.shuttleapp.rs/block/$BLOCK_ID
 ```
 
+### Decode the WVM archived block data for a given EVM block ID (return original block data in JSON format)
+
+```bash
+curl -X GET https://your_app.shuttleapp.rs/block/raw/$BLOCK_ID
+```
+
 ## License
 This project is licensed under the [MIT License](./LICENSE)
