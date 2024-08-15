@@ -1,7 +1,11 @@
 use crate::utils::env_var::get_env_var;
 use crate::utils::schema::Network;
+use crate::utils::schema::Block;
 use ethers::{prelude::*, utils};
 use ethers_providers::{Http, Provider};
+use std::str::FromStr;
+use ethers::types::{H256, Bytes};
+use ethers::utils::hex;
 
 type Client = SignerMiddleware<Provider<Http>, Wallet<k256::ecdsa::SigningKey>>;
 
@@ -59,4 +63,21 @@ async fn send_transaction(
 
     println!("\nWeaveVM Archiving TXID: {}", txid);
     Ok(txid)
+}
+
+pub async fn decode_wvm_tx_data(txid: &str) -> Block {
+    let network = Network::config();
+    let provider = network.provider(true).await;
+    let txid = H256::from_str(&txid).unwrap();
+    let tx = provider.get_transaction(txid).await.unwrap();
+
+    let tx_json = serde_json::json!(&tx);
+    let tx_input_raw = tx_json["input"].as_str().unwrap_or("0x");
+    let byte_array = hex::decode(tx_input_raw.trim_start_matches("0x")).expect("decoding failed");
+
+    let brotli_decompressed = Block::brotli_decompress(byte_array);
+    let borsh_derserialized = Block::borsh_der(brotli_decompressed);
+    println!("{:?}", borsh_derserialized);
+    borsh_derserialized
+
 }
