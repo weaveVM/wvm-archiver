@@ -50,6 +50,30 @@ To start archiving your network block data on WeaveVM:
 5. Choose a unique `archive_pool_address` that's different from your `archiver_address`.
 6. Set up your PlanetScale DB according to `db_schema.sql`.
 
+### RPC Proxy and Caching
+
+You can use [eRPC](https://github.com/erpc/erpc) to cache, load-balance and failover between as many RPC endpoints and use eRPC's proxy URL in each network's config for WeaveVM. This will increase performance and resiliency and reduce RPC usage cost while fetching network's block data via WeaveVM.
+
+```bash
+# modify erpc.yaml
+cp erpc.yaml.dist erpc.yaml
+code erpc.yaml
+
+# run docker-compose
+docker-compose up -d
+```
+
+Finally, you can set eRPC's proxy URL in each relative network config.
+```optimism.json
+{
+    "name": "Optimism",
+    "network_chain_id": 10,
+    "network_rpc": "http://erpc:4000/main/evm/10",
+    ...
+}
+```
+
+
 ## How it works
 
 The WeaveVM Archiver node operates as follows:

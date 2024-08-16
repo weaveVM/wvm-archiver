@@ -1,0 +1,15 @@
+version: "3"
+
+networks:
+  erpc:
+    driver: bridge
+
+services:
+  erpc:
+    image: ghcr.io/erpc/erpc:latest
+    platform: linux/amd64
+    volumes:
+      - "${PWD}/erpc.yaml:/root/erpc.yaml"
+    ports:
+      - "4000:4000"
+    restart: always
