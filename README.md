@@ -52,7 +52,7 @@ To start archiving your network block data on WeaveVM:
 
 ### RPC Proxy and Caching
 
-You can use [eRPC](https://github.com/erpc/erpc) to cache, load-balance and failover between as many RPC endpoints and use eRPC's proxy URL in each network's config for WeaveVM. This will increase performance and resilliency and reduce RPC usage cost while fetching network's block data via WeaveVM.
+You can use [eRPC](https://github.com/erpc/erpc) to cache, load-balance and failover between as many RPC endpoints and use eRPC's proxy URL in each network's config for WeaveVM. This will increase performance and resiliency and reduce RPC usage cost while fetching network's block data via WeaveVM.
 
 ```bash
 # modify erpc.yaml
