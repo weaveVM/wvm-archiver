@@ -63,7 +63,7 @@ code erpc.yaml
 docker-compose up -d
 ```
 
-Finally, you can set eRPC's proxy URL in each relative network config
+Finally, you can set eRPC's proxy URL in each relative network config.
 ```optimism.json
 {
     "name": "Optimism",
