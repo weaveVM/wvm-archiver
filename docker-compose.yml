@@ -12,24 +12,4 @@ services:
       - "${PWD}/erpc.yaml:/root/erpc.yaml"
     ports:
       - "4000:4000"
-      - "4001:4001"
     restart: always
-
-  monitoring:
-    build: ./monitoring
-    ports:
-      - "3000:3000" # Grafana
-      - "9090:9090" # Prometheus
-    environment:
-      - SERVICE_ENDPOINT=host.docker.internal
-      - SERVICE_PORT=4001
-    volumes:
-      - ./monitoring/prometheus:/etc/prometheus
-      - ./monitoring/grafana/grafana.ini:/etc/grafana/grafana.ini
-      - ./monitoring/grafana/dashboards:/etc/grafana/dashboards
-      - prometheus_data:/prometheus
-      - grafana_data:/var/lib/grafana
-
-volumes:
-  prometheus_data:
-  grafana_data:
