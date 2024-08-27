@@ -1,7 +1,7 @@
 use crate::utils::env_var::get_env_var;
 use crate::utils::schema::Block;
 use crate::utils::schema::Network;
-use ethers::types::{Bytes, H256};
+use ethers::types::H256;
 use ethers::utils::hex;
 use ethers::{prelude::*, utils};
 use ethers_providers::{Http, Provider};

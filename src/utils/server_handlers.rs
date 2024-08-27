@@ -3,7 +3,6 @@ use crate::utils::schema::Block;
 use crate::utils::schema::InfoServerResponse;
 use crate::utils::transaction::decode_wvm_tx_data;
 use axum::{extract::Path, response::Json};
-use serde::de::value;
 use serde_json::Value;
 
 pub async fn handle_weave_gm() -> &'static str {
