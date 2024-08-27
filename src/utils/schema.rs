@@ -1,4 +1,5 @@
 use crate::utils::env_var::get_env_var;
+use crate::utils::get_block::get_current_block_number;
 use crate::utils::transaction::get_archiver_balance;
 use borsh::{from_slice, to_vec};
 use borsh_derive::{BorshDeserialize, BorshSerialize};
@@ -124,6 +125,7 @@ pub struct InfoServerResponse {
     first_block: Option<u64>,
     last_block: Option<u64>,
     total_archived_blocks: u64,
+    blocks_behind_live_blockheight: u64,
     archiver_balance: U256,
     archiver_address: String,
     network_name: String,
@@ -137,9 +139,12 @@ impl InfoServerResponse {
         let total_archived_blocks = last_block.unwrap_or(0) - first_block.unwrap_or(0);
         let archiver_balance = get_archiver_balance().await;
         let archiver_balance = Some(archiver_balance).unwrap();
+        let current_live_block = get_current_block_number().await.as_u64();
+        let blocks_behind_live_blockheight = current_live_block - last_block.unwrap_or(0);
 
         let instance: InfoServerResponse = InfoServerResponse {
             archiver_balance,
+            blocks_behind_live_blockheight,
             first_block,
             last_block,
             total_archived_blocks,
