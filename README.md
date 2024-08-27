@@ -101,6 +101,7 @@ pub struct InfoServerResponse {
     last_block: Option<u64>,
     total_archived_blocks: u64,
     archiver_balance: U256,
+    blocks_behind_live_blockheight: u64,
     archiver_address: String,
     network_name: String,
     network_chain_id: u32,
