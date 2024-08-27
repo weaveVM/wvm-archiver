@@ -1,9 +1,7 @@
 use crate::utils::planetscale::{ps_get_archived_block_txid, ps_get_blocks_extremes};
-use crate::utils::schema::Block;
-use crate::utils::schema::InfoServerResponse;
+use crate::utils::schema::{Block, InfoServerResponse};
 use crate::utils::transaction::decode_wvm_tx_data;
 use axum::{extract::Path, response::Json};
-use serde::de::value;
 use serde_json::Value;
 
 pub async fn handle_weave_gm() -> &'static str {
@@ -21,7 +19,7 @@ pub async fn handle_info() -> Json<Value> {
 
     let first_block = first.get("block_id").unwrap().as_u64();
     let last_block = last.get("block_id").unwrap().as_u64();
-    let stats_res = InfoServerResponse::new(first_block, last_block).await;
+    let stats_res: InfoServerResponse = InfoServerResponse::new(first_block, last_block).await;
 
     let res = serde_json::to_value(&stats_res).unwrap();
     Json(res)
