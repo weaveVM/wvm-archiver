@@ -124,4 +124,4 @@ curl -X GET https://the_network.wvm.network/block/raw/$BLOCK_ID
 ```
 
 ## License
-This project is licensed under the [MIT License](./LICENSE)
+This project is licensed under the [BSL 1.1 License](./LICENSE)
