@@ -41,7 +41,7 @@ pub async fn get_archiver_balance() -> U256 {
     balance
 }
 
-async fn send_transaction(
+pub async fn send_transaction(
     client: &Client,
     address_from: &Address,
     address_to: &Address,
