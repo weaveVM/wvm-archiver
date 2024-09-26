@@ -1,6 +1,6 @@
 [package]
 name = "wvm-archiver"
-version = "0.1.3"
+version = "0.2.3"
 edition = "2021"
 description = "EL data pipeline for WVM testnet v0"
 authors = ["charmful0x <rani@decent.land>"]
@@ -8,7 +8,7 @@ license = "MIT"
 repository = "https://github.com/weavevm/wvm-archiver"
 readme = "README.md"
 documentation = "https://docs.wvm.dev"
-keywords = ["wvm", "indexer", "arweave"]
+keywords = ["wvm", "indexer", "arweave", "etl"]
 
 [dependencies]
 anyhow = "1.0.86"

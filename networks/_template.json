@@ -1,0 +1,13 @@
+{
+    "name": "$YOUR_NETWORK_NAME",
+    "network_chain_id": 1, // your network ID
+    "wvm_chain_id": 9496,
+    "network_rpc": "https://", // your network public RPC URL
+    "wvm_rpc": "https://testnet-rpc.wvm.dev",
+    "block_time": 1, // your network block time in seconds
+    "start_block": 7777, // at what blockheight your want to start the 
+    // archiving, it's advised to use the most recent blockheight
+    "archiver_address": "$ARCHIVING_ADDRESS_1", // it archives starting from "start_block"
+    "backfill_address": "$ARCHIVING_ADDRESS_2", // it archives from genesis until start_block
+    "archive_pool_address": "$DIFFERENT_ADDRESS" // most common is 0x0 address (null)
+}

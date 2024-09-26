@@ -32,6 +32,7 @@ While a WeaveVM Archiver node can run without web2 component dependencies, this 
 
 ```js
 archiver_pk="" // WeaveVM archiver PK
+backfill_pk="" // WeaveVM backfill PK
 network="./networks/your_network.json"
 
 DATABASE_HOST="" // planetscale
@@ -45,10 +46,11 @@ To start archiving your network block data on WeaveVM:
 
 1. Add your network config file to the [networks](./networks/) directory.
 2. Name your config file using snake_case syntax (e.g., `your_network_name.json`).
-3. Modify properties that don't have a `wvm_` prefix in the config JSON file.
-4. Fund your `archiver_address` with a sufficient amount of tWVM (1 MB costs ~ 5 cents). Check out WVM Faucet to claim $tWVM.
-5. Choose a unique `archive_pool_address` that's different from your `archiver_address`.
-6. Set up your PlanetScale DB according to `db_schema.sql`.
+3. Modify properties that don't have a `wvm_` prefix in the config JSON file. Check [_template.json](./networks/_template.json) guide
+4. Fund your `archiver_address` & `backfill_address` with a sufficient amount of tWVM (1 MB costs ~ 5 cents). Check out [WVM Faucet](https://wvm.dev/faucet) to claim $tWVM. Make sure that the two addresses are distinct.
+5. Choose a unique `archive_pool_address` that's different from your `archiver_address` & `backfill_address`
+6. set `start_block` value to the most recent network's blockheight. That will facilitate the archiver to start in sync with live blockheight while, in parallel, reindexing from genesis using the `backfill_address`. 
+7. Set up your PlanetScale DB according to `db_schema.sql`.
 
 ### RPC Proxy and Caching
 
@@ -64,6 +66,7 @@ docker-compose up -d
 ```
 
 Finally, you can set eRPC's proxy URL in each relative network config.
+
 ```optimism.json
 {
     "name": "Optimism",
@@ -73,7 +76,6 @@ Finally, you can set eRPC's proxy URL in each relative network config.
 }
 ```
 
-
 ## How it works
 
 The WeaveVM Archiver node operates as follows:
@@ -81,7 +83,7 @@ The WeaveVM Archiver node operates as follows:
 1. It starts downloading the target EVM network block data from the RPC you provide in the network config file.
 2. The node begins pulling blocks from the `start_block` defined in the network's config file.
 3. The block data is then serialized in [borsh](https://borsh.io) format and compressed using Brotli.
-4. The serialized-compressed data is pushed to WeaveVM as calldata transaction from the `archiver_address` to the `archive_pool_address`.
+4. The serialized-compressed data is pushed to WeaveVM as calldata transaction from the `archiver_address` & `backfill_address` to the `archive_pool_address`.
 5. Simultaneously, the resulting TXID from pushing data to WeaveVM and the archived EVM block ID are indexed in the cloud for faster data retrieval.
 
 ## Server Methods
