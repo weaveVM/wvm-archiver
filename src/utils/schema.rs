@@ -1,5 +1,6 @@
 use crate::utils::env_var::get_env_var;
 use crate::utils::get_block::get_current_block_number;
+use crate::utils::planetscale::ps_get_archived_blocks_count;
 use crate::utils::transaction::get_archiver_balance;
 use borsh::{from_slice, to_vec};
 use borsh_derive::{BorshDeserialize, BorshSerialize};
@@ -22,6 +23,7 @@ pub struct Network {
     pub block_time: u32,
     pub start_block: u64, // as per ethers_provider
     pub archiver_address: String,
+    pub backfill_address: String,
     pub archive_pool_address: String,
 }
 
@@ -120,6 +122,11 @@ pub struct PsGetExtremeBlock {
     pub block_id: u64,
 }
 
+#[derive(Database, Debug, Serialize)]
+pub struct PsGetTotalBlocksCount {
+    pub count: u64,
+}
+
 #[derive(Debug, Serialize)]
 pub struct InfoServerResponse {
     first_block: Option<u64>,
@@ -136,7 +143,7 @@ pub struct InfoServerResponse {
 impl InfoServerResponse {
     pub async fn new(first_block: Option<u64>, last_block: Option<u64>) -> InfoServerResponse {
         let network = Network::config();
-        let total_archived_blocks = last_block.unwrap_or(0) - first_block.unwrap_or(0);
+        let total_archived_blocks = (ps_get_archived_blocks_count().await).count;
         let archiver_balance = get_archiver_balance().await;
         let archiver_balance = Some(archiver_balance).unwrap();
         let current_live_block = get_current_block_number().await.as_u64();

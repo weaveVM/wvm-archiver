@@ -1,11 +1,11 @@
 use crate::utils::get_block::{by_number, get_current_block_number};
 use crate::utils::planetscale::{ps_archive_block, ps_get_latest_block_id};
 use crate::utils::schema::{Block, Network};
-use crate::utils::transaction::send_wvm_calldata;
+use crate::utils::transaction::{send_wvm_calldata, send_wvm_calldata_backfill};
 use anyhow::Error;
 use std::{thread, time::Duration};
 
-pub async fn archive(block_number: Option<u64>) -> Result<String, Error> {
+pub async fn archive(block_number: Option<u64>, is_backfill: bool) -> Result<String, Error> {
     let network = Network::config();
     let start_block = network.start_block;
     let block_to_archive = block_number.unwrap_or(start_block);
@@ -23,7 +23,12 @@ pub async fn archive(block_number: Option<u64>) -> Result<String, Error> {
     // println!("borsh vec length: {:?}", borsh_res.len());
     // println!("brotli vec length: {:?}", brotli_res.len());
 
-    let txid = send_wvm_calldata(brotli_res).await.unwrap();
+    let txid = if is_backfill {
+        send_wvm_calldata_backfill(brotli_res).await.unwrap()
+    } else {
+        send_wvm_calldata(brotli_res).await.unwrap()
+    };
+
     Ok(txid)
 }
 
@@ -33,16 +38,20 @@ pub async fn sprint_blocks_archiving() {
     let mut current_block_number = get_current_block_number().await.as_u64();
     let ps_latest_archived_block = ps_get_latest_block_id().await;
     // it defaults to network.start_block if planestcale fails
-    let mut start_block = ps_latest_archived_block;
+    let mut start_block = if ps_latest_archived_block < network.start_block {
+        network.start_block
+    } else {
+        ps_latest_archived_block
+    };
 
     loop {
-        if ps_latest_archived_block < current_block_number - 1 {
+        if start_block < current_block_number - 1 {
             println!("\n{}", "#".repeat(100));
             println!(
                 "\nARCHIVING BLOCK #{} of Network {} -- ChainId: {}\n",
                 start_block, network.name, network.network_chain_id
             );
-            let archive_txid = archive(Some(start_block)).await.unwrap();
+            let archive_txid = archive(Some(start_block), false).await.unwrap();
             let _ = ps_archive_block(&start_block, &archive_txid).await;
             start_block += 1;
             println!("\n{}", "#".repeat(100));

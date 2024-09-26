@@ -1,5 +1,5 @@
 use crate::utils::env_var::get_env_var;
-use crate::utils::schema::{Network, PsGetBlockTxid, PsGetExtremeBlock};
+use crate::utils::schema::{Network, PsGetBlockTxid, PsGetExtremeBlock, PsGetTotalBlocksCount};
 use anyhow::Error;
 use planetscale_driver::{query, PSConnection};
 use serde_json::Value;
@@ -22,12 +22,13 @@ pub async fn ps_archive_block(
     let wvm_calldata_txid = wvm_calldata_txid.trim_matches('"');
     let conn = ps_init().await;
 
-    let res =
-        query("INSERT INTO WeaveVMArchiver(NetworkBlockId, WeaveVMArchiveTxid) VALUES($0, \"$1\")")
-            .bind(network_block_id)
-            .bind(wvm_calldata_txid)
-            .execute(&conn)
-            .await;
+    let res = query(
+        "INSERT INTO WeaveVMArchiverMetis(NetworkBlockId, WeaveVMArchiveTxid) VALUES($0, \"$1\")",
+    )
+    .bind(network_block_id)
+    .bind(wvm_calldata_txid)
+    .execute(&conn)
+    .await;
 
     match res {
         Ok(result) => {
@@ -46,7 +47,7 @@ pub async fn ps_get_latest_block_id() -> u64 {
     let conn = ps_init().await;
 
     let latest_archived: u64 =
-        query("SELECT MAX(NetworkBlockId) AS LatestNetworkBlockId FROM WeaveVMArchiver;")
+        query("SELECT MAX(NetworkBlockId) AS LatestNetworkBlockId FROM WeaveVMArchiverMetis;")
             .fetch_scalar(&conn)
             .await
             .unwrap_or(network.start_block);
@@ -59,7 +60,7 @@ pub async fn ps_get_archived_block_txid(id: u64) -> Value {
     let conn = ps_init().await;
 
     let query_formatted = format!(
-        "SELECT WeaveVMArchiveTxid FROM WeaveVMArchiver WHERE NetworkBlockId = {}",
+        "SELECT WeaveVMArchiveTxid FROM WeaveVMArchiverMetis WHERE NetworkBlockId = {}",
         id
     );
     let txid: PsGetBlockTxid = query(&query_formatted).fetch_one(&conn).await.unwrap();
@@ -78,7 +79,7 @@ pub async fn ps_get_blocks_extremes(extreme: &str) -> Value {
     };
 
     let query_formatted = format!(
-        "SELECT NetworkBlockId FROM WeaveVMArchiver ORDER BY NetworkBlockId {} LIMIT 1;",
+        "SELECT NetworkBlockId FROM WeaveVMArchiverMetis ORDER BY NetworkBlockId {} LIMIT 1;",
         query_type
     );
 
@@ -86,4 +87,12 @@ pub async fn ps_get_blocks_extremes(extreme: &str) -> Value {
 
     let res = serde_json::json!(query);
     res
+}
+
+pub async fn ps_get_archived_blocks_count() -> PsGetTotalBlocksCount {
+    let conn = ps_init().await;
+
+    let query_formatted = "SELECT MAX(Id) FROM WeaveVMArchiverMetis;";
+    let count: PsGetTotalBlocksCount = query(&query_formatted).fetch_one(&conn).await.unwrap();
+    count
 }
