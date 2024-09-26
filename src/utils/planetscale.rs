@@ -22,12 +22,13 @@ pub async fn ps_archive_block(
     let wvm_calldata_txid = wvm_calldata_txid.trim_matches('"');
     let conn = ps_init().await;
 
-    let res =
-        query("INSERT INTO WeaveVMArchiverMetis(NetworkBlockId, WeaveVMArchiveTxid) VALUES($0, \"$1\")")
-            .bind(network_block_id)
-            .bind(wvm_calldata_txid)
-            .execute(&conn)
-            .await;
+    let res = query(
+        "INSERT INTO WeaveVMArchiverMetis(NetworkBlockId, WeaveVMArchiveTxid) VALUES($0, \"$1\")",
+    )
+    .bind(network_block_id)
+    .bind(wvm_calldata_txid)
+    .execute(&conn)
+    .await;
 
     match res {
         Ok(result) => {
@@ -91,8 +92,7 @@ pub async fn ps_get_blocks_extremes(extreme: &str) -> Value {
 pub async fn ps_get_archived_blocks_count() -> PsGetTotalBlocksCount {
     let conn = ps_init().await;
 
-    let query_formatted =
-        "SELECT MAX(Id) FROM WeaveVMArchiverMetis;";
+    let query_formatted = "SELECT MAX(Id) FROM WeaveVMArchiverMetis;";
     let count: PsGetTotalBlocksCount = query(&query_formatted).fetch_one(&conn).await.unwrap();
     count
 }

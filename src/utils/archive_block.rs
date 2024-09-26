@@ -39,7 +39,7 @@ pub async fn sprint_blocks_archiving() {
     let ps_latest_archived_block = ps_get_latest_block_id().await;
     // it defaults to network.start_block if planestcale fails
     let mut start_block = if ps_latest_archived_block < network.start_block {
-        network.start_block 
+        network.start_block
     } else {
         ps_latest_archived_block
     };

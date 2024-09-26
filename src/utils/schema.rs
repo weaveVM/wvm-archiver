@@ -1,7 +1,7 @@
 use crate::utils::env_var::get_env_var;
 use crate::utils::get_block::get_current_block_number;
-use crate::utils::transaction::get_archiver_balance;
 use crate::utils::planetscale::ps_get_archived_blocks_count;
+use crate::utils::transaction::get_archiver_balance;
 use borsh::{from_slice, to_vec};
 use borsh_derive::{BorshDeserialize, BorshSerialize};
 use ethers::types::U256;
