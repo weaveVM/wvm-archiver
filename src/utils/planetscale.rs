@@ -1,5 +1,5 @@
 use crate::utils::env_var::get_env_var;
-use crate::utils::schema::{Network, PsGetBlockTxid, PsGetExtremeBlock};
+use crate::utils::schema::{Network, PsGetBlockTxid, PsGetExtremeBlock, PsGetTotalBlocksCount};
 use anyhow::Error;
 use planetscale_driver::{query, PSConnection};
 use serde_json::Value;
@@ -86,4 +86,13 @@ pub async fn ps_get_blocks_extremes(extreme: &str) -> Value {
 
     let res = serde_json::json!(query);
     res
+}
+
+pub async fn ps_get_archived_blocks_count() -> PsGetTotalBlocksCount {
+    let conn = ps_init().await;
+
+    let query_formatted =
+        "SELECT MAX(Id) FROM WeaveVMArchiverMetis;";
+    let count: PsGetTotalBlocksCount = query(&query_formatted).fetch_one(&conn).await.unwrap();
+    count
 }
