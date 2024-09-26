@@ -22,6 +22,7 @@ pub struct Network {
     pub block_time: u32,
     pub start_block: u64, // as per ethers_provider
     pub archiver_address: String,
+    pub backfill_address: String,
     pub archive_pool_address: String,
 }
 

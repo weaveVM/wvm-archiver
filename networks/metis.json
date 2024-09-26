@@ -5,7 +5,8 @@
     "network_rpc": "https://andromeda.metis.io/?owner=1088",
     "wvm_rpc": "https://testnet-rpc.wvm.dev",
     "block_time": 9,
-    "start_block": 18039936,
+    "start_block": 18574702,
     "archiver_address": "0x197f818c1313DC58b32D88078ecdfB40EA822614",
+    "backfill_address": "0x123463a4B065722E99115D6c222f267d9cABb524",
     "archive_pool_address": "0xa2A0D977847805fE224B789D8C4d3D711ab251e7"
 }

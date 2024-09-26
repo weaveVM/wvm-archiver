@@ -5,3 +5,4 @@ pub mod planetscale;
 pub mod schema;
 pub mod server_handlers;
 pub mod transaction;
+pub mod backfill_genesis;

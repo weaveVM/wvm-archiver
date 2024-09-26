@@ -28,6 +28,25 @@ pub async fn send_wvm_calldata(block_data: Vec<u8>) -> Result<String, Box<dyn st
     Ok(txid)
 }
 
+pub async fn send_wvm_calldata_backfill(block_data: Vec<u8>) -> Result<String, Box<dyn std::error::Error>> {
+    let network = Network::config();
+    let provider = Network::provider(&network, true).await;
+    let private_key = get_env_var("backfill_pk").unwrap();
+    let wallet: LocalWallet = private_key
+        .parse::<LocalWallet>()?
+        .with_chain_id(network.wvm_chain_id);
+    let client = SignerMiddleware::new(provider.clone(), wallet.clone());
+
+    let address_from = network.backfill_address.parse::<Address>()?;
+    let address_to = network.archive_pool_address.parse::<Address>()?;
+    // check archiver tWVM balance (non-zero)
+    assert_non_zero_balance(&provider, &address_from).await;
+    // send calldata tx to WeaveVM
+    let txid = send_transaction(&client, &address_from, &address_to, block_data).await?;
+
+    Ok(txid)
+}
+
 async fn assert_non_zero_balance(provider: &Provider<Http>, address: &Address) {
     let balance = provider.get_balance(address.clone(), None).await.unwrap();
     assert!(balance > 0.into());
