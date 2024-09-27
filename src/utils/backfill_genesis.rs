@@ -6,7 +6,7 @@ use anyhow::{Error, Ok};
 pub async fn backfill_from_genesis() -> Result<(), Error> {
     let network = Network::config();
     let config_start_block = network.start_block;
-    let backfill_blocks: Vec<u64> = (0..=config_start_block).collect();
+    let backfill_blocks: Vec<u64> = (3719..=config_start_block).collect();
 
     if config_start_block == 0 {
         return Ok(());
