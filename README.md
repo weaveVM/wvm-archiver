@@ -33,6 +33,7 @@ While a WeaveVM Archiver node can run without web2 component dependencies, this 
 ```js
 archiver_pk="" // WeaveVM archiver PK
 backfill_pk="" // WeaveVM backfill PK
+backfill_start_block="0" // it defaults to 0 (genesis), but it's dynamic, so you can specify from which block number you want to start backfilling
 network="./networks/your_network.json"
 
 DATABASE_HOST="" // planetscale
@@ -51,6 +52,15 @@ To start archiving your network block data on WeaveVM:
 5. Choose a unique `archive_pool_address` that's different from your `archiver_address` & `backfill_address`
 6. set `start_block` value to the most recent network's blockheight. That will facilitate the archiver to start in sync with live blockheight while, in parallel, reindexing from genesis using the `backfill_address`. 
 7. Set up your PlanetScale DB according to `db_schema.sql`.
+
+#### Parallel Threads of Archiving
+
+As mentioned previously, `archiver_address` is responsible for archiving blocks starting from the `start_block` specified in your `network.json` config file, while also keeping up with the network’s current blockheight (live sync). Meanwhile, `backfill_address` handles archiving blocks from `backfill_start_block` up to `start_block`.
+
+```txt
+backfill thread: backfill_start_block -> start_block
+live sync thread: start_block -> network's live blockheight
+```
 
 ### RPC Proxy and Caching
 
