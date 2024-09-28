@@ -1,10 +1,11 @@
 use crate::utils::env_var::get_env_var;
 use crate::utils::get_block::get_current_block_number;
 use crate::utils::planetscale::ps_get_archived_blocks_count;
-use crate::utils::transaction::get_archiver_balance;
+use crate::utils::transaction::get_balance_of;
 use borsh::{from_slice, to_vec};
 use borsh_derive::{BorshDeserialize, BorshSerialize};
 use ethers::types::U256;
+use ethers_core::k256::elliptic_curve::consts::U25;
 use ethers_providers::{Http, Provider};
 use planetscale_driver::Database;
 use serde::{Deserialize, Serialize};
@@ -129,12 +130,15 @@ pub struct PsGetTotalBlocksCount {
 
 #[derive(Debug, Serialize)]
 pub struct InfoServerResponse {
-    first_block: Option<u64>,
-    last_block: Option<u64>,
+    first_archived_block: Option<u64>,
+    last_archived_block: Option<u64>,
+    livesync_start_block: u64,
     total_archived_blocks: u64,
     blocks_behind_live_blockheight: u64,
     archiver_balance: U256,
     archiver_address: String,
+    backfill_address: String,
+    backfill_balance: U256,
     network_name: String,
     network_chain_id: u32,
     network_rpc: String,
@@ -143,19 +147,26 @@ pub struct InfoServerResponse {
 impl InfoServerResponse {
     pub async fn new(first_block: Option<u64>, last_block: Option<u64>) -> InfoServerResponse {
         let network = Network::config();
+        // balances
+        let archiver_balance = get_balance_of(network.archiver_address.clone()).await;
+        let archiver_balance = Some(archiver_balance).unwrap_or("0".into());
+        let backfill_balance = get_balance_of(network.backfill_address.clone()).await;
+        let backfill_balance = Some(backfill_balance).unwrap_or("0".into());
+        // blocks stats
         let total_archived_blocks = (ps_get_archived_blocks_count().await).count;
-        let archiver_balance = get_archiver_balance().await;
-        let archiver_balance = Some(archiver_balance).unwrap();
         let current_live_block = get_current_block_number().await.as_u64();
         let blocks_behind_live_blockheight = current_live_block - last_block.unwrap_or(0);
 
         let instance: InfoServerResponse = InfoServerResponse {
             archiver_balance,
+            backfill_balance,
             blocks_behind_live_blockheight,
-            first_block,
-            last_block,
+            livesync_start_block: network.start_block,
+            first_archived_block: first_block,
+            last_archived_block: last_block,
             total_archived_blocks,
             archiver_address: network.archiver_address,
+            backfill_address: network.backfill_address,
             network_name: network.name,
             network_chain_id: network.network_chain_id,
             network_rpc: network.network_rpc,

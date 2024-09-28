@@ -111,12 +111,15 @@ curl -X GET https://the_network.wvm.network/info
 
 ```rs
 pub struct InfoServerResponse {
-    first_block: Option<u64>,
-    last_block: Option<u64>,
+    first_archived_block: Option<u64>,
+    last_archived_block: Option<u64>,
+    livesync_start_block: u64,
     total_archived_blocks: u64,
-    archiver_balance: U256,
     blocks_behind_live_blockheight: u64,
+    archiver_balance: U256,
     archiver_address: String,
+    backfill_address: String,
+    backfill_balance: U256,
     network_name: String,
     network_chain_id: u32,
     network_rpc: String,
