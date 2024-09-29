@@ -5,7 +5,6 @@ use crate::utils::transaction::get_balance_of;
 use borsh::{from_slice, to_vec};
 use borsh_derive::{BorshDeserialize, BorshSerialize};
 use ethers::types::U256;
-use ethers_core::k256::elliptic_curve::consts::U25;
 use ethers_providers::{Http, Provider};
 use planetscale_driver::Database;
 use serde::{Deserialize, Serialize};
@@ -21,7 +20,7 @@ pub struct Network {
     pub wvm_chain_id: u32,
     pub network_rpc: String,
     pub wvm_rpc: String,
-    pub block_time: u32,
+    pub block_time: f32,
     pub start_block: u64, // as per ethers_provider
     pub archiver_address: String,
     pub backfill_address: String,
