@@ -57,7 +57,7 @@ pub async fn sprint_blocks_archiving() {
             println!("\n{}", "#".repeat(100));
         } else {
             current_block_number = get_current_block_number().await.as_u64();
-            thread::sleep(Duration::from_secs(block_time.into()));
+            thread::sleep(Duration::from_secs(block_time as u64));
         }
     }
 }
