@@ -1,7 +1,9 @@
 use crate::utils::archive_block::sprint_blocks_archiving;
 use crate::utils::backfill_genesis::backfill_from_genesis;
 use crate::utils::schema::Network;
-use crate::utils::server_handlers::{handle_block, handle_block_raw, handle_info, handle_weave_gm};
+use crate::utils::server_handlers::{
+    handle_all_networks_info, handle_block, handle_block_raw, handle_info, handle_weave_gm,
+};
 use axum::{routing::get, Router};
 use tokio::task;
 
@@ -16,15 +18,16 @@ async fn main() -> shuttle_axum::ShuttleAxum {
         .route("/", get(handle_weave_gm))
         .route("/info", get(handle_info))
         .route("/block/:id", get(handle_block))
-        .route("/block/raw/:id", get(handle_block_raw));
+        .route("/block/raw/:id", get(handle_block_raw))
+        .route("/all-networks-info", get(handle_all_networks_info));
 
     // poll blocks & sprint archiving in parallel
     task::spawn(async move {
-        sprint_blocks_archiving().await;
+        // sprint_blocks_archiving().await;
     });
     // backfill blocks from genesis till network.start_block
     task::spawn(async move {
-        backfill_from_genesis().await.unwrap();
+        // backfill_from_genesis().await.unwrap();
     });
     Ok(router.into())
 }
