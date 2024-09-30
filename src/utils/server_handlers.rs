@@ -1,8 +1,11 @@
+use crate::utils::all_networks::get_all_networks_metadata;
 use crate::utils::planetscale::{ps_get_archived_block_txid, ps_get_blocks_extremes};
 use crate::utils::schema::{Block, InfoServerResponse};
 use crate::utils::transaction::decode_wvm_tx_data;
 use axum::{extract::Path, response::Json};
 use serde_json::Value;
+
+use super::all_networks;
 
 pub async fn handle_weave_gm() -> &'static str {
     "WeaveGM!"
@@ -31,4 +34,9 @@ pub async fn handle_block_raw(Path(id): Path<u64>) -> Json<Value> {
     let decoded_block: Block = decode_wvm_tx_data(txid).await;
     let res = serde_json::to_value(&decoded_block).unwrap();
     Json(res)
+}
+
+pub async fn handle_all_networks_info() -> Json<Value> {
+    let all_networks = get_all_networks_metadata().await;
+    Json(all_networks)
 }

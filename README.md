@@ -126,6 +126,18 @@ pub struct InfoServerResponse {
 }
 ```
 
+### WeaveVM Archiver all networks info:
+
+```bash
+curl -X GET https://the_network.wvm.network/all-networks-info
+```
+
+**returns:**
+
+```rs
+Vec<Network>
+```
+
 ### Retrieve the WVM archive TXID for a given EVM block ID
 
 ```bash

@@ -1,3 +1,4 @@
+pub mod all_networks;
 pub mod archive_block;
 pub mod backfill_genesis;
 pub mod env_var;

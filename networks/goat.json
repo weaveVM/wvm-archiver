@@ -7,5 +7,6 @@
     "block_time": 2,
     "start_block": 20902,
     "archiver_address": "0xE5e289FC97C63f64B1EC5e061d7f176e02eBE5A0",
+    "backfill_address": "",
     "archive_pool_address": "0x0000000000000000000000000000000000000000"
 }
