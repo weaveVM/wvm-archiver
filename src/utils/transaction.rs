@@ -72,8 +72,8 @@ pub async fn send_transaction(
         "\nArchiving block data from archiver: {} to archive pool: {}",
         address_from, address_to
     );
-    // 7wei equivalent to 0.000000007Gwei
-    let gas_price = U256::from(7);
+    // 2.14 Gwei
+    let gas_price = U256::from(2_140_000_000);
     let tx = TransactionRequest::new()
         .to(address_to.clone())
         .value(U256::from(utils::parse_ether(0)?))
