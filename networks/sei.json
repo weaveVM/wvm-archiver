@@ -1,11 +1,11 @@
 {
-    "name": "SEI",
+    "name": "SEI V2 EVM",
     "network_chain_id": 1329,
     "wvm_chain_id": 9496,
     "network_rpc": "https://evm-rpc.sei-apis.com",
     "wvm_rpc": "https://testnet-rpc.wvm.dev",
     "block_time": 0.39,
-    "start_block": 105238600,
+    "start_block": 111454818,
     "archiver_address": "0x2D76d7B140d078C575eAAD109168c606FE9d506C",
     "backfill_address": "0x55dA54ee977FBe734d5250F0558bc4B2FBe36b2a",
     "archive_pool_address": "0x0000000000000000000000000000000000000000"
