@@ -105,14 +105,16 @@ As mentioned, PlanetScale is used for cloud indexing, which allows a WeaveVM Arc
 ### WeaveVM Archiver node instance info
 
 ```bash
-curl -X GET https://the_network.wvm.network/info
+curl -X GET https://the_network.wvm.network/v1/info
 ```
 **returns:**
 
 ```rs
 pub struct InfoServerResponse {
-    first_archived_block: Option<u64>,
-    last_archived_block: Option<u64>,
+    first_livesync_archived_block: Option<u64>,
+    last_livesync_archived_block: Option<u64>,
+    first_backfill_archived_block: Option<u64>,
+    last_backfill_archived_block: Option<u64>,
     livesync_start_block: u64,
     total_archived_blocks: u64,
     blocks_behind_live_blockheight: u64,
@@ -129,7 +131,7 @@ pub struct InfoServerResponse {
 ### WeaveVM Archiver all networks info:
 
 ```bash
-curl -X GET https://the_network.wvm.network/all-networks-info
+curl -X GET https://the_network.wvm.network/v1/all-networks-info
 ```
 
 **returns:**
@@ -141,13 +143,13 @@ Vec<Network>
 ### Retrieve the WVM archive TXID for a given EVM block ID
 
 ```bash
-curl -X GET https://the_network.wvm.network/block/$BLOCK_ID
+curl -X GET https://the_network.wvm.network/v1/block/$BLOCK_ID
 ```
 
 ### Decode the WVM archived block data for a given EVM block ID (return original block data in JSON format)
 
 ```bash
-curl -X GET https://the_network.wvm.network/block/raw/$BLOCK_ID
+curl -X GET https://the_network.wvm.network/v1/block/raw/$BLOCK_ID
 ```
 
 ## License

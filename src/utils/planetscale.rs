@@ -17,18 +17,27 @@ async fn ps_init() -> PSConnection {
 pub async fn ps_archive_block(
     network_block_id: &u64,
     wvm_calldata_txid: &str,
+    is_backfill: bool,
 ) -> Result<(), Error> {
     // format to the table VAR(66) limitation
     let wvm_calldata_txid = wvm_calldata_txid.trim_matches('"');
     let conn = ps_init().await;
+    let mut ps_table_name = get_env_var("ps_table_name").unwrap();
 
-    let res = query(
-        "INSERT INTO WeaveVMArchiverMetis(NetworkBlockId, WeaveVMArchiveTxid) VALUES($0, \"$1\")",
-    )
-    .bind(network_block_id)
-    .bind(wvm_calldata_txid)
-    .execute(&conn)
-    .await;
+    if is_backfill {
+        ps_table_name = format!("{}{}", ps_table_name, "Backfill")
+    }
+
+    let query_str = format!(
+        "INSERT INTO {}(NetworkBlockId, WeaveVMArchiveTxid) VALUES($0, \"$1\")",
+        ps_table_name
+    );
+
+    let res = query(&query_str)
+        .bind(network_block_id)
+        .bind(wvm_calldata_txid)
+        .execute(&conn)
+        .await;
 
     match res {
         Ok(result) => {
@@ -42,15 +51,33 @@ pub async fn ps_archive_block(
     }
 }
 
-pub async fn ps_get_latest_block_id() -> u64 {
+pub async fn ps_get_latest_block_id(is_backfill: bool) -> u64 {
     let network = Network::config();
     let conn = ps_init().await;
 
-    let latest_archived: u64 =
-        query("SELECT MAX(NetworkBlockId) AS LatestNetworkBlockId FROM WeaveVMArchiverMetis;")
-            .fetch_scalar(&conn)
-            .await
-            .unwrap_or(network.start_block);
+    let mut ps_table_name = get_env_var("ps_table_name").unwrap();
+    if is_backfill {
+        ps_table_name = format!("{}{}", ps_table_name, "Backfill")
+    }
+
+    let query_str = format!(
+        "SELECT MAX(NetworkBlockId) AS LatestNetworkBlockId FROM {};",
+        ps_table_name
+    );
+
+    let default_start_block = if is_backfill {
+        get_env_var("backfill_start_block")
+            .unwrap()
+            .parse::<u64>()
+            .unwrap()
+    } else {
+        network.start_block
+    };
+
+    let latest_archived: u64 = query(&query_str)
+        .fetch_scalar(&conn)
+        .await
+        .unwrap_or(default_start_block);
     // return latest archived block in planetscale + 1
     // so the process can start archiving from latest_archived + 1
     latest_archived + 1
@@ -58,19 +85,42 @@ pub async fn ps_get_latest_block_id() -> u64 {
 
 pub async fn ps_get_archived_block_txid(id: u64) -> Value {
     let conn = ps_init().await;
+    let network = Network::config();
+    let ps_table_name = get_env_var("ps_table_name").unwrap();
 
-    let query_formatted = format!(
-        "SELECT WeaveVMArchiveTxid FROM WeaveVMArchiverMetis WHERE NetworkBlockId = {}",
-        id
+    let query_formatted_livesync = format!(
+        "SELECT WeaveVMArchiveTxid FROM {} WHERE NetworkBlockId = {}",
+        ps_table_name, id
     );
+
+    let query_formatted_backfill = format!(
+        "SELECT WeaveVMArchiveTxid FROM {}Backfill WHERE NetworkBlockId = {}",
+        ps_table_name, id
+    );
+
+    // query from tables based on block id existence in the livesync of backfill
+    let query_formatted = if id >= network.start_block {
+        query_formatted_livesync
+    } else {
+        query_formatted_backfill
+    };
+
     let txid: PsGetBlockTxid = query(&query_formatted).fetch_one(&conn).await.unwrap();
 
     let res = serde_json::json!(txid);
     res
 }
 
-pub async fn ps_get_blocks_extremes(extreme: &str) -> Value {
+pub async fn ps_get_blocks_extremes(extreme: &str, is_backfill: bool) -> Value {
     let conn = ps_init().await;
+
+    let mut ps_table_name = get_env_var("ps_table_name").unwrap();
+
+    ps_table_name = if is_backfill {
+        format!("{ps_table_name}Backfill")
+    } else {
+        ps_table_name
+    };
 
     let query_type = match extreme {
         "first" => "ASC",
@@ -79,8 +129,8 @@ pub async fn ps_get_blocks_extremes(extreme: &str) -> Value {
     };
 
     let query_formatted = format!(
-        "SELECT NetworkBlockId FROM WeaveVMArchiverMetis ORDER BY NetworkBlockId {} LIMIT 1;",
-        query_type
+        "SELECT NetworkBlockId FROM {} ORDER BY NetworkBlockId {} LIMIT 1;",
+        ps_table_name, query_type
     );
 
     let query: PsGetExtremeBlock = query(&query_formatted).fetch_one(&conn).await.unwrap();
@@ -89,10 +139,19 @@ pub async fn ps_get_blocks_extremes(extreme: &str) -> Value {
     res
 }
 
-pub async fn ps_get_archived_blocks_count() -> PsGetTotalBlocksCount {
+pub async fn ps_get_archived_blocks_count() -> u64 {
     let conn = ps_init().await;
+    let ps_table_name = get_env_var("ps_table_name").unwrap();
 
-    let query_formatted = "SELECT MAX(Id) FROM WeaveVMArchiverMetis;";
-    let count: PsGetTotalBlocksCount = query(&query_formatted).fetch_one(&conn).await.unwrap();
-    count
+    let query_formatted_livesync = format!("SELECT MAX(Id) FROM {};", ps_table_name);
+    let query_formatted_backfill = format!("SELECT MAX(Id) FROM {}Backfill;", ps_table_name);
+    let count_livesync: PsGetTotalBlocksCount = query(&query_formatted_livesync)
+        .fetch_one(&conn)
+        .await
+        .unwrap();
+    let count_backfill: PsGetTotalBlocksCount = query(&query_formatted_backfill)
+        .fetch_one(&conn)
+        .await
+        .unwrap();
+    count_livesync.count + count_backfill.count
 }
