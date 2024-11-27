@@ -23,11 +23,11 @@ async fn main() -> shuttle_axum::ShuttleAxum {
 
     // poll blocks & sprint archiving in parallel
     task::spawn(async move {
-        sprint_blocks_archiving().await;
+        sprint_blocks_archiving(false).await;
     });
     // backfill blocks from genesis till network.start_block
     task::spawn(async move {
-        backfill_from_genesis().await.unwrap();
+        sprint_blocks_archiving(true).await;
     });
     Ok(router.into())
 }

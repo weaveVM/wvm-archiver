@@ -22,7 +22,7 @@ pub async fn backfill_from_genesis() -> Result<(), Error> {
             &block_number, network.name, network.network_chain_id
         );
         let archive_txid = archive(Some(block_number), true).await.unwrap();
-        let _ = ps_archive_block(&block_number, &archive_txid).await;
+        let _ = ps_archive_block(&block_number, &archive_txid, true).await;
         println!("\n{}", "#".repeat(100));
     }
 

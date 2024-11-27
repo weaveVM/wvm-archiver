@@ -5,3 +5,9 @@ CREATE TABLE IF NOT EXISTS WeaveVMArchiver (
     NetworkBlockId INT UNIQUE,
     WeaveVMArchiveTxid VARCHAR(66) UNIQUE
 );
+
+CREATE TABLE IF NOT EXISTS WeaveVMArchiverBackfill (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    NetworkBlockId INT UNIQUE,
+    WeaveVMArchiveTxid VARCHAR(66) UNIQUE
+);

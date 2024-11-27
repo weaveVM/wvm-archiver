@@ -17,13 +17,25 @@ async fn ps_init() -> PSConnection {
 pub async fn ps_archive_block(
     network_block_id: &u64,
     wvm_calldata_txid: &str,
+    is_backfill: bool
 ) -> Result<(), Error> {
     // format to the table VAR(66) limitation
     let wvm_calldata_txid = wvm_calldata_txid.trim_matches('"');
     let conn = ps_init().await;
+    let mut ps_table_name = get_env_var("table_name").unwrap();
+
+    if is_backfill {
+        ps_table_name = format!("{}{}", ps_table_name, "Backfill")
+    }
+
+    let query_str = format!(
+        "INSERT INTO {}(NetworkBlockId, WeaveVMArchiveTxid) VALUES($0, \"$1\")",
+        ps_table_name
+    );
+
 
     let res = query(
-        "INSERT INTO WeaveVMArchiverMetis(NetworkBlockId, WeaveVMArchiveTxid) VALUES($0, \"$1\")",
+        &query_str,
     )
     .bind(network_block_id)
     .bind(wvm_calldata_txid)
@@ -42,15 +54,31 @@ pub async fn ps_archive_block(
     }
 }
 
-pub async fn ps_get_latest_block_id() -> u64 {
+pub async fn ps_get_latest_block_id(is_backfill: bool) -> u64 {
     let network = Network::config();
     let conn = ps_init().await;
 
+    let mut ps_table_name = get_env_var("ps_table").unwrap();
+    if is_backfill {
+        ps_table_name = format!("{}{}", ps_table_name, "Backfill")
+    }
+
+    let query_str = format!(
+        "SELECT MAX(NetworkBlockId) AS LatestNetworkBlockId FROM {};",
+        ps_table_name
+    );
+
+    let default_start_block = if is_backfill {
+        get_env_var("backfill_start_block").unwrap().parse::<u64>().unwrap()
+    } else {
+        network.start_block
+    };
+
     let latest_archived: u64 =
-        query("SELECT MAX(NetworkBlockId) AS LatestNetworkBlockId FROM WeaveVMArchiverMetis;")
+        query(&query_str)
             .fetch_scalar(&conn)
             .await
-            .unwrap_or(network.start_block);
+            .unwrap_or(default_start_block);
     // return latest archived block in planetscale + 1
     // so the process can start archiving from latest_archived + 1
     latest_archived + 1
