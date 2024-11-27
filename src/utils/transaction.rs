@@ -58,7 +58,10 @@ pub async fn get_balance_of(addr: String) -> U256 {
     let network = Network::config();
     let provider = Network::provider(&network, true).await;
     let address = addr.parse::<Address>().unwrap_or(Address::zero());
-    let balance = provider.get_balance(address, None).await.unwrap_or(U256::zero());
+    let balance = provider
+        .get_balance(address, None)
+        .await
+        .unwrap_or(U256::zero());
     balance
 }
 

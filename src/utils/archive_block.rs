@@ -1,17 +1,26 @@
+use crate::utils::env_var::get_env_var;
 use crate::utils::get_block::{by_number, get_current_block_number};
 use crate::utils::planetscale::{ps_archive_block, ps_get_latest_block_id};
 use crate::utils::schema::{Block, Network};
 use crate::utils::transaction::{send_wvm_calldata, send_wvm_calldata_backfill};
-use crate::utils::env_var::get_env_var;
 use anyhow::Error;
 use std::{thread, time::Duration};
 
 pub async fn archive(block_number: Option<u64>, is_backfill: bool) -> Result<String, Error> {
     let network = Network::config();
-    let block_to_archive = block_number.unwrap_or(if is_backfill {get_env_var("backfill_start_block").unwrap().parse::<u64>().unwrap()} else {network.start_block});
+    let block_to_archive = block_number.unwrap_or(if is_backfill {
+        get_env_var("backfill_start_block")
+            .unwrap()
+            .parse::<u64>()
+            .unwrap()
+    } else {
+        network.start_block
+    });
 
     // assert to ensure backfill and livesync dont collide at the continuity checkpoint
-    if is_backfill {assert!(block_number.unwrap() < network.start_block)}
+    if is_backfill {
+        assert!(block_number.unwrap() < network.start_block)
+    }
     // fetch block
     let block_data = by_number(block_to_archive).await.unwrap();
     // serialize response into Block struct

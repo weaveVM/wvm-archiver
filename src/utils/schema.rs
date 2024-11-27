@@ -146,7 +146,12 @@ pub struct InfoServerResponse {
 }
 
 impl InfoServerResponse {
-    pub async fn new(first_livesync_block: Option<u64>, last_livesync_block: Option<u64>, first_backfill_block: Option<u64>, last_backfill_block: Option<u64>) -> InfoServerResponse {
+    pub async fn new(
+        first_livesync_block: Option<u64>,
+        last_livesync_block: Option<u64>,
+        first_backfill_block: Option<u64>,
+        last_backfill_block: Option<u64>,
+    ) -> InfoServerResponse {
         let network = Network::config();
         // balances
         let archiver_balance = get_balance_of(network.archiver_address.clone()).await;
@@ -165,8 +170,8 @@ impl InfoServerResponse {
             livesync_start_block: network.start_block,
             first_livesync_archived_block: first_livesync_block,
             first_backfill_archived_block: first_backfill_block,
-            last_livesync_archived_block: last_backfill_block,
-            last_backfill_archived_block: last_livesync_block,
+            last_livesync_archived_block: last_livesync_block,
+            last_backfill_archived_block: last_backfill_block,
             total_archived_blocks,
             archiver_address: network.archiver_address,
             backfill_address: network.backfill_address,
