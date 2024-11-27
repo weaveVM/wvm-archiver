@@ -114,8 +114,16 @@ pub async fn ps_get_archived_block_txid(id: u64) -> Value {
     res
 }
 
-pub async fn ps_get_blocks_extremes(extreme: &str) -> Value {
+pub async fn ps_get_blocks_extremes(extreme: &str, is_backfill: bool) -> Value {
     let conn = ps_init().await;
+
+    let mut ps_table_name = get_env_var("ps_table_name").unwrap();
+
+    ps_table_name = if is_backfill {
+        format!("{ps_table_name}Backfill")
+    } else {
+        ps_table_name
+    };
 
     let query_type = match extreme {
         "first" => "ASC",
@@ -124,7 +132,8 @@ pub async fn ps_get_blocks_extremes(extreme: &str) -> Value {
     };
 
     let query_formatted = format!(
-        "SELECT NetworkBlockId FROM WeaveVMArchiverMetis ORDER BY NetworkBlockId {} LIMIT 1;",
+        "SELECT NetworkBlockId FROM {} ORDER BY NetworkBlockId {} LIMIT 1;",
+        ps_table_name,
         query_type
     );
 

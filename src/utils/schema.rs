@@ -129,8 +129,10 @@ pub struct PsGetTotalBlocksCount {
 
 #[derive(Debug, Serialize)]
 pub struct InfoServerResponse {
-    first_archived_block: Option<u64>,
-    last_archived_block: Option<u64>,
+    first_livesync_archived_block: Option<u64>,
+    last_livesync_archived_block: Option<u64>,
+    first_backfill_archived_block: Option<u64>,
+    last_backfill_archived_block: Option<u64>,
     livesync_start_block: u64,
     total_archived_blocks: u64,
     blocks_behind_live_blockheight: u64,
@@ -144,7 +146,7 @@ pub struct InfoServerResponse {
 }
 
 impl InfoServerResponse {
-    pub async fn new(first_block: Option<u64>, last_block: Option<u64>) -> InfoServerResponse {
+    pub async fn new(first_livesync_block: Option<u64>, last_livesync_block: Option<u64>, first_backfill_block: Option<u64>, last_backfill_block: Option<u64>) -> InfoServerResponse {
         let network = Network::config();
         // balances
         let archiver_balance = get_balance_of(network.archiver_address.clone()).await;
@@ -152,17 +154,19 @@ impl InfoServerResponse {
         let backfill_balance = get_balance_of(network.backfill_address.clone()).await;
         let backfill_balance = Some(backfill_balance).unwrap_or("0".into());
         // blocks stats
-        let total_archived_blocks = (ps_get_archived_blocks_count().await);
+        let total_archived_blocks = ps_get_archived_blocks_count().await;
         let current_live_block = get_current_block_number().await.as_u64();
-        let blocks_behind_live_blockheight = current_live_block - last_block.unwrap_or(0);
+        let blocks_behind_live_blockheight = current_live_block - last_livesync_block.unwrap_or(0);
 
         let instance: InfoServerResponse = InfoServerResponse {
             archiver_balance,
             backfill_balance,
             blocks_behind_live_blockheight,
             livesync_start_block: network.start_block,
-            first_archived_block: first_block,
-            last_archived_block: last_block,
+            first_livesync_archived_block: first_livesync_block,
+            first_backfill_archived_block: first_backfill_block,
+            last_livesync_archived_block: last_backfill_block,
+            last_backfill_archived_block: last_livesync_block,
             total_archived_blocks,
             archiver_address: network.archiver_address,
             backfill_address: network.backfill_address,

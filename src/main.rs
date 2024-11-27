@@ -1,5 +1,4 @@
 use crate::utils::archive_block::sprint_blocks_archiving;
-use crate::utils::backfill_genesis::backfill_from_genesis;
 use crate::utils::schema::Network;
 use crate::utils::server_handlers::{
     handle_all_networks_info, handle_block, handle_block_raw, handle_info, handle_weave_gm,
