@@ -152,7 +152,7 @@ impl InfoServerResponse {
         let backfill_balance = get_balance_of(network.backfill_address.clone()).await;
         let backfill_balance = Some(backfill_balance).unwrap_or("0".into());
         // blocks stats
-        let total_archived_blocks = (ps_get_archived_blocks_count().await).count;
+        let total_archived_blocks = (ps_get_archived_blocks_count().await);
         let current_live_block = get_current_block_number().await.as_u64();
         let blocks_behind_live_blockheight = current_live_block - last_block.unwrap_or(0);
 

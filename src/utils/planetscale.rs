@@ -86,11 +86,28 @@ pub async fn ps_get_latest_block_id(is_backfill: bool) -> u64 {
 
 pub async fn ps_get_archived_block_txid(id: u64) -> Value {
     let conn = ps_init().await;
+    let network = Network::config();
+    let ps_table_name = get_env_var("ps_table_name").unwrap(); 
 
-    let query_formatted = format!(
-        "SELECT WeaveVMArchiveTxid FROM WeaveVMArchiverMetis WHERE NetworkBlockId = {}",
+    let query_formatted_livesync = format!(
+        "SELECT WeaveVMArchiveTxid FROM {} WHERE NetworkBlockId = {}",
+        ps_table_name,
         id
     );
+
+    let query_formatted_backfill = format!(
+        "SELECT WeaveVMArchiveTxid FROM {}Backfill WHERE NetworkBlockId = {}",
+        ps_table_name,
+        id
+    );
+
+    // query from tables based on block id existence in the livesync of backfill
+    let query_formatted = if id >= network.start_block {
+        query_formatted_livesync
+    } else {
+        query_formatted_backfill
+    };
+
     let txid: PsGetBlockTxid = query(&query_formatted).fetch_one(&conn).await.unwrap();
 
     let res = serde_json::json!(txid);
@@ -117,10 +134,13 @@ pub async fn ps_get_blocks_extremes(extreme: &str) -> Value {
     res
 }
 
-pub async fn ps_get_archived_blocks_count() -> PsGetTotalBlocksCount {
+pub async fn ps_get_archived_blocks_count() -> u64 {
     let conn = ps_init().await;
+    let ps_table_name = get_env_var("ps_table_name").unwrap();
 
-    let query_formatted = "SELECT MAX(Id) FROM WeaveVMArchiverMetis;";
-    let count: PsGetTotalBlocksCount = query(&query_formatted).fetch_one(&conn).await.unwrap();
-    count
+    let query_formatted_livesync = format!("SELECT MAX(Id) FROM {};", ps_table_name);
+    let query_formatted_backfill = format!("SELECT MAX(Id) FROM {}Backfill;", ps_table_name);
+    let count_livesync: PsGetTotalBlocksCount = query(&query_formatted_livesync).fetch_one(&conn).await.unwrap();
+    let count_backfill: PsGetTotalBlocksCount = query(&query_formatted_backfill).fetch_one(&conn).await.unwrap();
+    count_livesync.count + count_backfill.count
 }
