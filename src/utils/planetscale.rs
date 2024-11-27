@@ -22,7 +22,7 @@ pub async fn ps_archive_block(
     // format to the table VAR(66) limitation
     let wvm_calldata_txid = wvm_calldata_txid.trim_matches('"');
     let conn = ps_init().await;
-    let mut ps_table_name = get_env_var("table_name").unwrap();
+    let mut ps_table_name = get_env_var("ps_table_name").unwrap();
 
     if is_backfill {
         ps_table_name = format!("{}{}", ps_table_name, "Backfill")
@@ -58,7 +58,7 @@ pub async fn ps_get_latest_block_id(is_backfill: bool) -> u64 {
     let network = Network::config();
     let conn = ps_init().await;
 
-    let mut ps_table_name = get_env_var("ps_table").unwrap();
+    let mut ps_table_name = get_env_var("ps_table_name").unwrap();
     if is_backfill {
         ps_table_name = format!("{}{}", ps_table_name, "Backfill")
     }
