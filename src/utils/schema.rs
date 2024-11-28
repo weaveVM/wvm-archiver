@@ -1,17 +1,21 @@
-use crate::utils::env_var::get_env_var;
-use crate::utils::get_block::get_current_block_number;
-use crate::utils::planetscale::ps_get_archived_blocks_count;
-use crate::utils::transaction::get_balance_of;
-use borsh::{from_slice, to_vec};
-use borsh_derive::{BorshDeserialize, BorshSerialize};
-use ethers::types::U256;
-use ethers_providers::{Http, Provider};
-use planetscale_driver::Database;
-use serde::{Deserialize, Serialize};
-use serde_json::Value;
-use std::convert::TryFrom;
-use std::fs::File;
-use std::io::{Read, Write};
+use {
+    crate::utils::{
+        env_var::get_env_var, get_block::get_current_block_number,
+        planetscale::ps_get_archived_blocks_count, transaction::get_balance_of,
+    },
+    borsh::{from_slice, to_vec},
+    borsh_derive::{BorshDeserialize, BorshSerialize},
+    ethers::types::U256,
+    ethers_providers::{Http, Provider},
+    planetscale_driver::Database,
+    serde::{Deserialize, Serialize},
+    serde_json::Value,
+    std::{
+        convert::TryFrom,
+        fs::File,
+        io::{Read, Write},
+    },
+};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Network {

@@ -35,6 +35,8 @@ archiver_pk="" // WeaveVM archiver PK
 backfill_pk="" // WeaveVM backfill PK
 backfill_start_block="0" // it defaults to 0 (genesis), but it's dynamic, so you can specify from which block number you want to start backfilling
 network="./networks/your_network.json"
+ps_livesync_table_name="LivesyncTableName"
+ps_backfill_table_name="BackfillTableName"
 
 DATABASE_HOST="" // planetscale
 DATABASE_USERNAME="" // planetscale

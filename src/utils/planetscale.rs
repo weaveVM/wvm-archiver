@@ -1,8 +1,12 @@
-use crate::utils::env_var::get_env_var;
-use crate::utils::schema::{Network, PsGetBlockTxid, PsGetExtremeBlock, PsGetTotalBlocksCount};
-use anyhow::Error;
-use planetscale_driver::{query, PSConnection};
-use serde_json::Value;
+use {
+    crate::utils::{
+        env_var::get_env_var,
+        schema::{Network, PsGetBlockTxid, PsGetExtremeBlock, PsGetTotalBlocksCount},
+    },
+    anyhow::Error,
+    planetscale_driver::{query, PSConnection},
+    serde_json::Value,
+};
 
 async fn ps_init() -> PSConnection {
     let host = get_env_var("DATABASE_HOST").unwrap();
@@ -22,10 +26,10 @@ pub async fn ps_archive_block(
     // format to the table VAR(66) limitation
     let wvm_calldata_txid = wvm_calldata_txid.trim_matches('"');
     let conn = ps_init().await;
-    let mut ps_table_name = get_env_var("ps_table_name").unwrap();
+    let mut ps_table_name = get_env_var("ps_livesync_table_name").unwrap();
 
     if is_backfill {
-        ps_table_name = format!("{}{}", ps_table_name, "Backfill")
+        ps_table_name = get_env_var("ps_backfill_table_name").unwrap();
     }
 
     let query_str = format!(
@@ -55,9 +59,9 @@ pub async fn ps_get_latest_block_id(is_backfill: bool) -> u64 {
     let network = Network::config();
     let conn = ps_init().await;
 
-    let mut ps_table_name = get_env_var("ps_table_name").unwrap();
+    let mut ps_table_name = get_env_var("ps_livesync_table_name").unwrap();
     if is_backfill {
-        ps_table_name = format!("{}{}", ps_table_name, "Backfill")
+        ps_table_name = get_env_var("ps_backfill_table_name").unwrap();
     }
 
     let query_str = format!(
@@ -86,16 +90,17 @@ pub async fn ps_get_latest_block_id(is_backfill: bool) -> u64 {
 pub async fn ps_get_archived_block_txid(id: u64) -> Value {
     let conn = ps_init().await;
     let network = Network::config();
-    let ps_table_name = get_env_var("ps_table_name").unwrap();
+    let ps_livesync_table_name = get_env_var("ps_livesync_table_name").unwrap();
+    let ps_backfill_table_name = get_env_var("ps_backfill_table_name").unwrap();
 
     let query_formatted_livesync = format!(
         "SELECT WeaveVMArchiveTxid FROM {} WHERE NetworkBlockId = {}",
-        ps_table_name, id
+        ps_livesync_table_name, id
     );
 
     let query_formatted_backfill = format!(
-        "SELECT WeaveVMArchiveTxid FROM {}Backfill WHERE NetworkBlockId = {}",
-        ps_table_name, id
+        "SELECT WeaveVMArchiveTxid FROM {} WHERE NetworkBlockId = {}",
+        ps_backfill_table_name, id
     );
 
     // query from tables based on block id existence in the livesync of backfill
@@ -114,10 +119,10 @@ pub async fn ps_get_archived_block_txid(id: u64) -> Value {
 pub async fn ps_get_blocks_extremes(extreme: &str, is_backfill: bool) -> Value {
     let conn = ps_init().await;
 
-    let mut ps_table_name = get_env_var("ps_table_name").unwrap();
+    let mut ps_table_name = get_env_var("ps_livesync_table_name").unwrap();
 
     ps_table_name = if is_backfill {
-        format!("{ps_table_name}Backfill")
+        get_env_var("ps_backfill_table_name").unwrap()
     } else {
         ps_table_name
     };
@@ -141,10 +146,11 @@ pub async fn ps_get_blocks_extremes(extreme: &str, is_backfill: bool) -> Value {
 
 pub async fn ps_get_archived_blocks_count() -> u64 {
     let conn = ps_init().await;
-    let ps_table_name = get_env_var("ps_table_name").unwrap();
+    let ps_livesync_table_name = get_env_var("ps_livesync_table_name").unwrap();
+    let ps_backfill_table_name = get_env_var("ps_backfill_table_name").unwrap();
 
-    let query_formatted_livesync = format!("SELECT MAX(Id) FROM {};", ps_table_name);
-    let query_formatted_backfill = format!("SELECT MAX(Id) FROM {}Backfill;", ps_table_name);
+    let query_formatted_livesync = format!("SELECT MAX(Id) FROM {};", ps_livesync_table_name);
+    let query_formatted_backfill = format!("SELECT MAX(Id) FROM {};", ps_backfill_table_name);
     let count_livesync: PsGetTotalBlocksCount = query(&query_formatted_livesync)
         .fetch_one(&conn)
         .await
