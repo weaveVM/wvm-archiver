@@ -1,0 +1,12 @@
+{
+    "name": "Humanode",
+    "network_chain_id": 5234,
+    "wvm_chain_id": 9496,
+    "network_rpc": "https://explorer-rpc-http.mainnet.stages.humanode.io",
+    "wvm_rpc": "https://testnet-rpc.wvm.dev",
+    "block_time": 6.0,
+    "start_block": 10438223,
+    "archiver_address": "0xC3C16f324e04fC9C2D1120ee8392449a675A06E4",
+    "backfill_address": "0x5e6548a22f64d43B804351208Fe93A261d9857f3",
+    "archive_pool_address": "0x0000000000000000000000000000000000000000"
+}
