@@ -4,7 +4,7 @@ use {
     std::{fs::File, io::Read},
 };
 
-static ALL_NETWORKS: [&str; 4] = ["goat", "metis", "rss3", "sei"];
+static ALL_NETWORKS: [&str; 5] = ["goat", "metis", "rss3", "sei", "humanode"];
 
 pub async fn get_all_networks_metadata() -> Value {
     let mut networks_vec: Vec<Network> = Vec::new();
