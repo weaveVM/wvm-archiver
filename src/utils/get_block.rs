@@ -1,6 +1,8 @@
-use crate::utils::schema::Network;
-use ethers_core::types::{Block, H256, U64};
-use ethers_providers::{Middleware, ProviderError};
+use {
+    crate::utils::schema::Network,
+    ethers_core::types::{Block, H256, U64},
+    ethers_providers::{Middleware, ProviderError},
+};
 
 pub async fn by_number(number: u64) -> Result<Option<Block<H256>>, ProviderError> {
     let network: Network = Network::config();

@@ -1,10 +1,14 @@
-use crate::utils::archive_block::sprint_blocks_archiving;
-use crate::utils::schema::Network;
-use crate::utils::server_handlers::{
-    handle_all_networks_info, handle_block, handle_block_raw, handle_info, handle_weave_gm,
+use {
+    crate::utils::{
+        archive_block::sprint_blocks_archiving,
+        schema::Network,
+        server_handlers::{
+            handle_all_networks_info, handle_block, handle_block_raw, handle_info, handle_weave_gm,
+        },
+    },
+    axum::{routing::get, Router},
+    tokio::task,
 };
-use axum::{routing::get, Router};
-use tokio::task;
 
 mod utils;
 #[shuttle_runtime::main]

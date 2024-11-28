@@ -1,8 +1,12 @@
-use crate::utils::env_var::get_env_var;
-use crate::utils::schema::{Network, PsGetBlockTxid, PsGetExtremeBlock, PsGetTotalBlocksCount};
-use anyhow::Error;
-use planetscale_driver::{query, PSConnection};
-use serde_json::Value;
+use {
+    crate::utils::{
+        env_var::get_env_var,
+        schema::{Network, PsGetBlockTxid, PsGetExtremeBlock, PsGetTotalBlocksCount},
+    },
+    anyhow::Error,
+    planetscale_driver::{query, PSConnection},
+    serde_json::Value,
+};
 
 async fn ps_init() -> PSConnection {
     let host = get_env_var("DATABASE_HOST").unwrap();

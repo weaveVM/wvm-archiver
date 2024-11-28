@@ -1,7 +1,8 @@
-use crate::utils::schema::Network;
-use serde_json::{json, Value};
-use std::fs::File;
-use std::io::{Read, Write};
+use {
+    crate::utils::schema::Network,
+    serde_json::{json, Value},
+    std::{fs::File, io::Read},
+};
 
 static ALL_NETWORKS: [&str; 4] = ["goat", "metis", "rss3", "sei"];
 
