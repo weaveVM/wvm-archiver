@@ -1,0 +1,12 @@
+{
+    "name": "Dymension",
+    "network_chain_id": 1100,
+    "wvm_chain_id": 9496,
+    "network_rpc": "https://dymension-mainnet.public.blastapi.io",
+    "wvm_rpc": "https://testnet-rpc.wvm.dev",
+    "block_time": 6.0,
+    "start_block": 4556106,
+    "archiver_address": "0xB10721416D8cf47cEa1d98e4a6D333990aD27292",
+    "backfill_address": "0xBD600464F5826Bdc92e50c6aD2Cc7381E9890273",
+    "archive_pool_address": "0x0000000000000000000000000000000000000000"
+}
