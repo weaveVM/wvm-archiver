@@ -35,10 +35,14 @@ pub async fn archive(block_number: Option<u64>, is_backfill: bool) -> Result<Str
     // brotli compress the borsh serialized block
     let brotli_res = Block::brotli_compress(&borsh_res);
 
-    let txid = if is_backfill {
-        send_wvm_calldata_backfill(brotli_res).await.unwrap()
+    let txid: String = if is_backfill {
+        send_wvm_calldata_backfill(brotli_res)
+            .await
+            .map_err(|e| anyhow::anyhow!("{}", e))?
     } else {
-        send_wvm_calldata(brotli_res).await.unwrap()
+        send_wvm_calldata(brotli_res)
+            .await
+            .map_err(|e| anyhow::anyhow!("{}", e))?
     };
 
     Ok(txid)
