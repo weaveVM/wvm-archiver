@@ -1,11 +1,13 @@
 use {
     crate::utils::{
         env_var::get_env_var,
-        get_block::{WvmArchiverDataBlock, get_block_by_number, get_current_block_number},
+        get_block::{get_block_by_number, get_current_block_number, WvmArchiverDataBlock},
         planetscale::{ps_archive_block, ps_get_latest_block_id},
-        schema::{Block, Network},
+        schema::Network,
         transaction::{send_wvm_calldata, send_wvm_calldata_backfill},
-    }, anyhow::Error, std::{thread, time::Duration}
+    },
+    anyhow::Error,
+    std::{thread, time::Duration},
 };
 
 pub async fn archive(block_number: Option<u64>, is_backfill: bool) -> Result<String, Error> {

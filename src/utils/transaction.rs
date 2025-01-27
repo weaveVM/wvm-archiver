@@ -1,9 +1,5 @@
 use {
-    crate::utils::{
-        env_var::get_env_var,
-        schema::{Network},
-        get_block::WvmArchiverDataBlock,
-    },
+    crate::utils::{env_var::get_env_var, get_block::WvmArchiverDataBlock, schema::Network},
     ethers::{prelude::*, types::H256, utils, utils::hex},
     ethers_providers::{Http, Provider},
     std::str::FromStr,

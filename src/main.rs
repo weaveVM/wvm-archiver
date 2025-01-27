@@ -12,8 +12,9 @@ use {
 
 mod utils;
 #[shuttle_runtime::main]
-async fn main(#[shuttle_runtime::Secrets] secrets: shuttle_runtime::SecretStore) -> shuttle_axum::ShuttleAxum {
-
+async fn main(
+    #[shuttle_runtime::Secrets] secrets: shuttle_runtime::SecretStore,
+) -> shuttle_axum::ShuttleAxum {
     // load secrets from Shuttle.toml into env var;
     secrets.into_iter().for_each(|(key, val)| {
         println!("{:?} {:?}", key, val);
