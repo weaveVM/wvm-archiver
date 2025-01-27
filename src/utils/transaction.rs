@@ -1,9 +1,7 @@
-use {
-    crate::utils::{env_var::get_env_var, get_block::WvmArchiverDataBlock, schema::Network},
-    ethers::{prelude::*, types::H256, utils, utils::hex},
-    ethers_providers::{Http, Provider},
-    std::str::FromStr,
-};
+use crate::utils::{env_var::get_env_var, get_block::WvmArchiverDataBlock, schema::Network};
+use ethers::{prelude::*, types::H256, utils, utils::hex};
+use ethers_providers::{Http, Provider};
+use std::str::FromStr;
 
 type Client = SignerMiddleware<Provider<Http>, Wallet<k256::ecdsa::SigningKey>>;
 

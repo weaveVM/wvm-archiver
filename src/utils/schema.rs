@@ -1,18 +1,14 @@
-use {
-    crate::utils::{
-        env_var::get_env_var, get_block::get_current_block_number,
-        planetscale::ps_get_archived_blocks_count, transaction::get_balance_of,
-    },
-    ethers::types::U256,
-    ethers_providers::{Http, Provider},
-    planetscale_driver::Database,
-    serde::{Deserialize, Serialize},
-    std::{
-        convert::TryFrom,
-        fs::File,
-        io::Read,
-    },
+use crate::utils::{
+    env_var::get_env_var, get_block::get_current_block_number,
+    planetscale::ps_get_archived_blocks_count, transaction::get_balance_of,
 };
+use ethers::types::U256;
+use ethers_providers::{Http, Provider};
+use planetscale_driver::Database;
+use serde::{Deserialize, Serialize};
+use std::convert::TryFrom;
+use std::fs::File;
+use std::io::Read;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Network {

@@ -1,8 +1,6 @@
-use {
-    crate::utils::schema::Network,
-    serde_json::{json, Value},
-    std::{fs::File, io::Read},
-};
+use crate::utils::schema::Network;
+use serde_json::{json, Value};
+use std::{fs::File, io::Read};
 
 static ALL_NETWORKS: [&str; 7] = [
     "goat",

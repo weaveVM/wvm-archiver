@@ -1,15 +1,12 @@
-use {
-    crate::utils::schema::Network,
-    axum::http::StatusCode,
-    borsh_derive::{BorshDeserialize, BorshSerialize},
-    ethers_core::types::{Block, Transaction, TransactionReceipt, H256, U64},
-    ethers_providers::{Middleware, ProviderError},
-    evm_state_reconstructing::utils::core::evm_wvm_types::{
-        WvmBlock, WvmTransaction, WvmTransactionReceipt,
-    },
-};
-
+use crate::utils::schema::Network;
+use axum::http::StatusCode;
 use borsh::{from_slice, to_vec};
+use borsh_derive::{BorshDeserialize, BorshSerialize};
+use ethers_core::types::U64;
+use ethers_providers::Middleware;
+use evm_state_reconstructing::utils::core::evm_wvm_types::{
+    WvmBlock, WvmTransaction, WvmTransactionReceipt,
+};
 use serde::Serialize;
 use std::io::{Read, Write};
 
