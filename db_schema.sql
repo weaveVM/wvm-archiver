@@ -12,3 +12,8 @@ CREATE TABLE IF NOT EXISTS WeaveVMArchiverBackfill (
     NetworkBlockId INT UNIQUE,
     WeaveVMArchiveTxid VARCHAR(66) UNIQUE
 );
+
+CREATE INDEX idx_archiver_txid ON WeaveVMArchiver (WeaveVMArchiveTxid);
+CREATE INDEX idx_backfill_txid ON WeaveVMArchiverBackfill (WeaveVMArchiveTxid);
+CREATE INDEX idx_archiver_block_id ON WeaveVMArchiver (NetworkBlockId);
+CREATE INDEX idx_backfill_block_id ON WeaveVMArchiverBackfill (NetworkBlockId);

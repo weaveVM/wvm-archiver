@@ -3,17 +3,14 @@ use {
         env_var::get_env_var, get_block::get_current_block_number,
         planetscale::ps_get_archived_blocks_count, transaction::get_balance_of,
     },
-    borsh::{from_slice, to_vec},
-    borsh_derive::{BorshDeserialize, BorshSerialize},
     ethers::types::U256,
     ethers_providers::{Http, Provider},
     planetscale_driver::Database,
     serde::{Deserialize, Serialize},
-    serde_json::Value,
     std::{
         convert::TryFrom,
         fs::File,
-        io::{Read, Write},
+        io::Read,
     },
 };
 
@@ -25,7 +22,7 @@ pub struct Network {
     pub network_rpc: String,
     pub wvm_rpc: String,
     pub block_time: f32,
-    pub start_block: u64, // as per ethers_provider
+    pub start_block: u64,
     pub archiver_address: String,
     pub backfill_address: String,
     pub archive_pool_address: String,
@@ -58,61 +55,6 @@ impl Network {
             Provider::<Http>::try_from(target_rpc).expect("could not instantiate HTTP Provider");
 
         provider
-    }
-}
-
-#[derive(Debug, Deserialize, Serialize, BorshSerialize, BorshDeserialize, PartialEq)]
-#[serde(rename_all = "camelCase")]
-pub struct Block {
-    pub base_fee_per_gas: Option<String>,         // "baseFeePerGas"
-    pub blob_gas_used: Option<String>,            // "blobGasUsed"
-    pub difficulty: Option<String>,               // "difficulty"
-    pub excess_blob_gas: Option<String>,          // "excessBlobGas"
-    pub extra_data: Option<String>,               // "extraData"
-    pub gas_limit: Option<String>,                // "gasLimit"
-    pub gas_used: Option<String>,                 // "gasUsed"
-    pub hash: Option<String>,                     // "hash"
-    pub logs_bloom: Option<String>,               // "logsBloom"
-    pub miner: Option<String>,                    // "miner"
-    pub mix_hash: Option<String>,                 // "mixHash"
-    pub nonce: Option<String>,                    // "nonce"
-    pub number: Option<String>,                   // "number"
-    pub parent_beacon_block_root: Option<String>, // "parentBeaconBlockRoot"
-    pub parent_hash: Option<String>,              // "parentHash"
-    pub receipts_root: Option<String>,            // "receiptsRoot"
-    pub seal_fields: Vec<String>,                 // "sealFields" as an array of strings
-    pub sha3_uncles: Option<String>,              // "sha3Uncles"
-    pub size: Option<String>,                     // "size"
-    pub state_root: Option<String>,               // "stateRoot"
-    pub timestamp: Option<String>,                // "timestamp"
-    pub total_difficulty: Option<String>,         // "totalDifficulty"
-    pub transactions: Vec<String>,                // "transactions" as an array of strings
-}
-
-impl Block {
-    pub fn load_block_from_value(value: Value) -> Result<Block, serde_json::Error> {
-        serde_json::from_value::<Block>(value)
-    }
-    pub fn brotli_compress(input: &[u8]) -> Vec<u8> {
-        let mut writer = brotli::CompressorWriter::new(Vec::new(), 4096, 11, 22);
-        writer.write_all(input).unwrap();
-        writer.into_inner()
-    }
-    pub fn brotli_decompress(input: Vec<u8>) -> Vec<u8> {
-        let mut decompressed_data = Vec::new();
-        let mut decompressor = brotli::Decompressor::new(input.as_slice(), 4096); // 4096 is the buffer size
-
-        decompressor
-            .read_to_end(&mut decompressed_data)
-            .expect("Decompression failed");
-        decompressed_data
-    }
-    pub fn borsh_ser(input: &Block) -> Vec<u8> {
-        to_vec(input).unwrap()
-    }
-    pub fn borsh_der(input: Vec<u8>) -> Block {
-        let res: Block = from_slice(&input).expect("error deseriliazing the calldata");
-        res
     }
 }
 

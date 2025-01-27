@@ -2,10 +2,10 @@
     "name": "Avalanche c-chain",
     "network_chain_id": 43114,
     "wvm_chain_id": 9496,
-    "network_rpc": "https://avalanche.drpc.org",
+    "network_rpc": "https://api.avax.network/ext/bc/C/rpc",
     "wvm_rpc": "https://testnet-rpc.wvm.dev",
     "block_time": 2.0,
-    "start_block": 53955124,
+    "start_block": 53998331,
     "archiver_address": "0x4b7C5d27e5b153A7A13809043ceB5E1781B2161D",
     "backfill_address": "0xE1E8Ffa2d12c07B25EfbA451030fABbf9B9ae071",
     "archive_pool_address": "0x0000000000000000000000000000000000000000"
