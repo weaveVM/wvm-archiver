@@ -1,7 +1,8 @@
 use {
     crate::utils::{
         env_var::get_env_var,
-        schema::{Block, Network},
+        schema::{Network},
+        get_block::WvmArchiverDataBlock,
     },
     ethers::{prelude::*, types::H256, utils, utils::hex},
     ethers_providers::{Http, Provider},
@@ -77,7 +78,7 @@ pub async fn send_transaction(
         address_from, address_to
     );
     // 2.14 Gwei
-    let gas_price = U256::from(1_000_000_000);
+    let gas_price = U256::from(1_200_000_000);
     let tx = TransactionRequest::new()
         .to(address_to.clone())
         .value(U256::from(utils::parse_ether(0)?))
@@ -93,7 +94,7 @@ pub async fn send_transaction(
     Ok(txid)
 }
 
-pub async fn decode_wvm_tx_data(txid: &str) -> Block {
+pub async fn decode_wvm_tx_data(txid: &str) -> WvmArchiverDataBlock {
     let network = Network::config();
     let provider = network.provider(true).await;
     let txid = H256::from_str(&txid).unwrap();
@@ -103,8 +104,8 @@ pub async fn decode_wvm_tx_data(txid: &str) -> Block {
     let tx_input_raw = tx_json["input"].as_str().unwrap_or("0x");
     let byte_array = hex::decode(tx_input_raw.trim_start_matches("0x")).expect("decoding failed");
 
-    let brotli_decompressed = Block::brotli_decompress(byte_array);
-    let borsh_derserialized = Block::borsh_der(brotli_decompressed);
+    let brotli_decompressed = WvmArchiverDataBlock::brotli_decompress(byte_array);
+    let borsh_derserialized = WvmArchiverDataBlock::borsh_der(brotli_decompressed);
     println!("{:?}", borsh_derserialized);
     borsh_derserialized
 }

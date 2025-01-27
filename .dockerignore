@@ -1,4 +1,4 @@
 /target
-/Cargo.toml
 
 .env
+Shuttle.secrets

@@ -1,5 +1,2 @@
-name = "wvm-archiver"
-
-assets = [
-    ".env"
-]
+[build]
+assets = ["networks/*"]

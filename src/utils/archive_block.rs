@@ -1,13 +1,11 @@
 use {
     crate::utils::{
         env_var::get_env_var,
-        get_block::{by_number, get_current_block_number},
+        get_block::{WvmArchiverDataBlock, get_block_by_number, get_current_block_number},
         planetscale::{ps_archive_block, ps_get_latest_block_id},
         schema::{Block, Network},
         transaction::{send_wvm_calldata, send_wvm_calldata_backfill},
-    },
-    anyhow::Error,
-    std::{thread, time::Duration},
+    }, anyhow::Error, std::{thread, time::Duration}
 };
 
 pub async fn archive(block_number: Option<u64>, is_backfill: bool) -> Result<String, Error> {
@@ -26,14 +24,11 @@ pub async fn archive(block_number: Option<u64>, is_backfill: bool) -> Result<Str
         assert!(block_number.unwrap() < network.start_block)
     }
     // fetch block
-    let block_data = by_number(block_to_archive).await.unwrap();
+    let block_data = get_block_by_number(block_to_archive).await.unwrap();
     // serialize response into Block struct
-    let block_data_json = serde_json::json!(block_data.as_ref().unwrap());
-    let block_data_struct = Block::load_block_from_value(block_data_json).unwrap();
-    // borsh serialize the struct
-    let borsh_res = Block::borsh_ser(&block_data_struct);
+    let borsh_res = WvmArchiverDataBlock::borsh_ser(&block_data);
     // brotli compress the borsh serialized block
-    let brotli_res = Block::brotli_compress(&borsh_res);
+    let brotli_res = WvmArchiverDataBlock::brotli_compress(&borsh_res);
 
     let txid = if is_backfill {
         send_wvm_calldata_backfill(brotli_res).await.unwrap()

@@ -2,7 +2,8 @@ use {
     crate::utils::{
         all_networks::get_all_networks_metadata,
         planetscale::{ps_get_archived_block_txid, ps_get_blocks_extremes},
-        schema::{Block, InfoServerResponse},
+        schema::{InfoServerResponse},
+        get_block::WvmArchiverDataBlock,
         transaction::decode_wvm_tx_data,
     },
     axum::{extract::Path, response::Json},
@@ -38,7 +39,7 @@ pub async fn handle_info() -> Json<Value> {
 pub async fn handle_block_raw(Path(id): Path<u64>) -> Json<Value> {
     let tx_object = ps_get_archived_block_txid(id).await;
     let txid = &tx_object["wvm_archive_txid"].as_str().unwrap();
-    let decoded_block: Block = decode_wvm_tx_data(txid).await;
+    let decoded_block: WvmArchiverDataBlock = decode_wvm_tx_data(txid).await;
     let res = serde_json::to_value(&decoded_block).unwrap();
     Json(res)
 }
