@@ -23,12 +23,12 @@ git clone https://github.com/weaveVM/wvm-archiver.git
 
 cd wvm-archiver
 
-cargo shuttle run
+shuttle run
 ```
 
 ### Prerequisites & Dependencies
 
-While a WeaveVM Archiver node can run without web2 component dependencies, this node implementation uses [planetscale](https://planetscale.com) for cloud indexing (indexing target network block ID to WVM archive TXID) and [shuttle.rs](https://shuttle.rs) for backend hosting. Check [.env.example](./env.example) to set up your environment variables.
+While a WeaveVM Archiver node can run without web2 component dependencies, this node implementation uses [planetscale](https://planetscale.com) for cloud indexing (indexing target network block ID to WVM archive TXID) and [shuttle.dev](https://shuttle.dev) for backend hosting. Check [.env.example](./env.example) to set up your environment variables.
 
 ```js
 archiver_pk="" // WeaveVM archiver PK
@@ -42,6 +42,8 @@ DATABASE_HOST="" // planetscale
 DATABASE_USERNAME="" // planetscale
 DATABASE_PASSWORD="" // planetscale
 ```
+
+***Read more about WeaveVM <> Shuttle teamup [here](https://www.shuttle.dev/blog/2025/01/17/shuttle-web3-weavevm)***
 
 ### Add Your Network
 
@@ -101,8 +103,6 @@ The WeaveVM Archiver node operates as follows:
 ## Server Methods
 
 As mentioned, PlanetScale is used for cloud indexing, which allows a WeaveVM Archiver node to expose its WeaveVM data as a RESTful API.
-
-#### Node instance endpoint: https://metis.wvm.network
 
 ### WeaveVM Archiver node instance info
 
