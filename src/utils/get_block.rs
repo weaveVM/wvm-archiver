@@ -98,6 +98,6 @@ pub async fn get_current_block_number() -> U64 {
     let network: Network = Network::config();
     // connect to the target EVM provider
     let provider = Network::provider(&network, false).await;
-    let block_number = provider.get_block_number().await.unwrap_or(0.into());
+    let block_number = provider.get_block_number().await.unwrap_or_default();
     block_number
 }

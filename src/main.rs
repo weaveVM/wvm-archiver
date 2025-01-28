@@ -30,11 +30,11 @@ async fn main(
 
     // poll blocks & sprint archiving in parallel
     task::spawn(async move {
-        sprint_blocks_archiving(false).await;
+        let _ = sprint_blocks_archiving(false).await;
     });
     // backfill blocks from genesis till network.start_block
     task::spawn(async move {
-        sprint_blocks_archiving(true).await;
+        let _ = sprint_blocks_archiving(true).await;
     });
     Ok(router.into())
 }

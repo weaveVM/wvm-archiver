@@ -5,10 +5,9 @@ use crate::utils::get_block::{
 use crate::utils::planetscale::{ps_archive_block, ps_get_latest_block_id};
 use crate::utils::schema::Network;
 use crate::utils::transaction::{send_wvm_calldata, send_wvm_calldata_backfill};
-use anyhow::Error;
 use std::{thread, time::Duration};
 
-pub async fn archive(block_number: Option<u64>, is_backfill: bool) -> Result<String, Error> {
+pub async fn archive(block_number: Option<u64>, is_backfill: bool) -> Result<String, anyhow::Error> {
     let network = Network::config();
     let block_to_archive = block_number.unwrap_or(if is_backfill {
         get_env_var("backfill_start_block")
@@ -24,22 +23,22 @@ pub async fn archive(block_number: Option<u64>, is_backfill: bool) -> Result<Str
         assert!(block_number.unwrap() < network.start_block)
     }
     // fetch block
-    let block_data = get_block_by_number(block_to_archive).await.unwrap();
+    let block_data = get_block_by_number(block_to_archive).await.map_err(|(status, msg)| anyhow::anyhow!("Block error ({}): {}", status, msg))?;
     // serialize response into Block struct
     let borsh_res = WvmArchiverDataBlock::borsh_ser(&block_data);
     // brotli compress the borsh serialized block
     let brotli_res = WvmArchiverDataBlock::brotli_compress(&borsh_res);
 
     let txid = if is_backfill {
-        send_wvm_calldata_backfill(brotli_res).await.unwrap()
+        send_wvm_calldata_backfill(brotli_res).await?
     } else {
-        send_wvm_calldata(brotli_res).await.unwrap()
+        send_wvm_calldata(brotli_res).await?
     };
 
     Ok(txid)
 }
 
-pub async fn sprint_blocks_archiving(is_backfill: bool) {
+pub async fn sprint_blocks_archiving(is_backfill: bool) -> Result<(), anyhow::Error> {
     let network = Network::config();
     let block_time = network.block_time;
     let mut current_block_number = get_current_block_number().await.as_u64();
@@ -54,8 +53,8 @@ pub async fn sprint_blocks_archiving(is_backfill: bool) {
                 "\nARCHIVING BLOCK #{} of Network {} -- ChainId: {} -- IS_BACKFILL: {}\n",
                 start_block, network.name, network.network_chain_id, is_backfill
             );
-            let archive_txid = archive(Some(start_block), is_backfill).await.unwrap();
-            let _ = ps_archive_block(&start_block, &archive_txid, is_backfill).await;
+            let archive_txid = archive(Some(start_block), is_backfill).await?;
+            let _ = ps_archive_block(&start_block, &archive_txid, is_backfill).await?;
             start_block += 1;
             println!("\n{}", "#".repeat(100));
         } else {

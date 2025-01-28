@@ -5,7 +5,7 @@ use std::str::FromStr;
 
 type Client = SignerMiddleware<Provider<Http>, Wallet<k256::ecdsa::SigningKey>>;
 
-pub async fn send_wvm_calldata(block_data: Vec<u8>) -> Result<String, Box<dyn std::error::Error>> {
+pub async fn send_wvm_calldata(block_data: Vec<u8>) -> Result<String, anyhow::Error> {
     let network = Network::config();
     let provider = Network::provider(&network, true).await;
     let private_key = get_env_var("archiver_pk").unwrap();
@@ -26,7 +26,7 @@ pub async fn send_wvm_calldata(block_data: Vec<u8>) -> Result<String, Box<dyn st
 
 pub async fn send_wvm_calldata_backfill(
     block_data: Vec<u8>,
-) -> Result<String, Box<dyn std::error::Error>> {
+) -> Result<String, anyhow::Error> {
     let network = Network::config();
     let provider = Network::provider(&network, true).await;
     let private_key = get_env_var("backfill_pk").unwrap();
@@ -66,7 +66,7 @@ pub async fn send_transaction(
     address_from: &Address,
     address_to: &Address,
     block_data: Vec<u8>,
-) -> Result<String, Box<dyn std::error::Error>> {
+) -> Result<String, anyhow::Error> {
     println!(
         "\nArchiving block data from archiver: {} to archive pool: {}",
         address_from, address_to
