@@ -7,7 +7,10 @@ use crate::utils::schema::Network;
 use crate::utils::transaction::{send_wvm_calldata, send_wvm_calldata_backfill};
 use std::{thread, time::Duration};
 
-pub async fn archive(block_number: Option<u64>, is_backfill: bool) -> Result<String, anyhow::Error> {
+pub async fn archive(
+    block_number: Option<u64>,
+    is_backfill: bool,
+) -> Result<String, anyhow::Error> {
     let network = Network::config();
     let block_to_archive = block_number.unwrap_or(if is_backfill {
         get_env_var("backfill_start_block")
@@ -23,7 +26,9 @@ pub async fn archive(block_number: Option<u64>, is_backfill: bool) -> Result<Str
         assert!(block_number.unwrap() < network.start_block)
     }
     // fetch block
-    let block_data = get_block_by_number(block_to_archive).await.map_err(|(status, msg)| anyhow::anyhow!("Block error ({}): {}", status, msg))?;
+    let block_data = get_block_by_number(block_to_archive)
+        .await
+        .map_err(|(status, msg)| anyhow::anyhow!("Block error ({}): {}", status, msg))?;
     // serialize response into Block struct
     let borsh_res = WvmArchiverDataBlock::borsh_ser(&block_data);
     // brotli compress the borsh serialized block
@@ -53,8 +58,12 @@ pub async fn sprint_blocks_archiving(is_backfill: bool) -> Result<(), anyhow::Er
                 "\nARCHIVING BLOCK #{} of Network {} -- ChainId: {} -- IS_BACKFILL: {}\n",
                 start_block, network.name, network.network_chain_id, is_backfill
             );
-            let archive_txid = archive(Some(start_block), is_backfill).await?;
-            let _ = ps_archive_block(&start_block, &archive_txid, is_backfill).await.unwrap_or_default();
+            let archive_txid = archive(Some(start_block), is_backfill)
+                .await
+                .unwrap_or_default();
+            let _ = ps_archive_block(&start_block, &archive_txid, is_backfill)
+                .await
+                .unwrap_or_default();
             start_block += 1;
             println!("\n{}", "#".repeat(100));
         } else {

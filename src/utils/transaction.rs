@@ -24,9 +24,7 @@ pub async fn send_wvm_calldata(block_data: Vec<u8>) -> Result<String, anyhow::Er
     Ok(txid)
 }
 
-pub async fn send_wvm_calldata_backfill(
-    block_data: Vec<u8>,
-) -> Result<String, anyhow::Error> {
+pub async fn send_wvm_calldata_backfill(block_data: Vec<u8>) -> Result<String, anyhow::Error> {
     let network = Network::config();
     let provider = Network::provider(&network, true).await;
     let private_key = get_env_var("backfill_pk").unwrap();

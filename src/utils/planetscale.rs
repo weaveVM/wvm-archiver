@@ -43,7 +43,6 @@ pub async fn ps_archive_block(
 
     println!("Insert operation was successful: {:?}", res);
     Ok(res)
-
 }
 
 pub async fn ps_get_latest_block_id(is_backfill: bool) -> u64 {
