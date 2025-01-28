@@ -39,18 +39,11 @@ pub async fn ps_archive_block(
         .bind(network_block_id)
         .bind(wvm_calldata_txid)
         .execute(&conn)
-        .await;
+        .await?;
 
-    match res {
-        Ok(result) => {
-            println!("Insert operation was successful: {:?}", result);
-            Ok(result)
-        }
-        Err(e) => {
-            println!("Error occurred during insert operation: {:?}", e);
-            Err(e)
-        }
-    }
+    println!("Insert operation was successful: {:?}", res);
+    Ok(res)
+
 }
 
 pub async fn ps_get_latest_block_id(is_backfill: bool) -> u64 {

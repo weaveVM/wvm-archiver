@@ -54,7 +54,7 @@ pub async fn sprint_blocks_archiving(is_backfill: bool) -> Result<(), anyhow::Er
                 start_block, network.name, network.network_chain_id, is_backfill
             );
             let archive_txid = archive(Some(start_block), is_backfill).await?;
-            let _ = ps_archive_block(&start_block, &archive_txid, is_backfill).await?;
+            let _ = ps_archive_block(&start_block, &archive_txid, is_backfill).await.unwrap_or_default();
             start_block += 1;
             println!("\n{}", "#".repeat(100));
         } else {
