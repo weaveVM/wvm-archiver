@@ -1,0 +1,12 @@
+{
+    "name": "Monad",
+    "network_chain_id": 10143,
+    "wvm_chain_id": 9496,
+    "network_rpc": "https://testnet-rpc.monad.xyz",
+    "wvm_rpc": "https://testnet-rpc.wvm.dev",
+    "block_time": 0.5,
+    "start_block": 3952162,
+    "archiver_address": "0xba43A2452ddd69aF8c0CcB8FdB6D7f187Bd8093c",
+    "backfill_address": "0x02563295eD56Cf5FB30a9e9670481F132722d677",
+    "archive_pool_address": "0x0000000000000000000000000000000000000000"
+}
