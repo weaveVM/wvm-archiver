@@ -1,0 +1,12 @@
+{
+    "name": "scroll",
+    "network_chain_id": 534352,
+    "wvm_chain_id": 9496,
+    "network_rpc": "https://rpc.scroll.io",
+    "wvm_rpc": "https://testnet-rpc.wvm.dev",
+    "block_time": 3,
+    "start_block": 13553079,
+    "archiver_address": "0xfFc80714a23c461f58d03C9E72B8616deD29Ccb4",
+    "backfill_address": "0x20028A8769dAEf3ddDF756662B2c32F56Ef0Eec7",
+    "archive_pool_address": "0x0000000000000000000000000000000000000000"
+}

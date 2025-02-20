@@ -2,7 +2,7 @@ use crate::utils::schema::Network;
 use serde_json::{json, Value};
 use std::{fs::File, io::Read};
 
-static ALL_NETWORKS: [&str; 8] = [
+static ALL_NETWORKS: [&str; 9] = [
     "goat",
     "metis",
     "rss3",
@@ -10,7 +10,8 @@ static ALL_NETWORKS: [&str; 8] = [
     "humanode",
     "dymension",
     "avalanche",
-    "monad"
+    "monad",
+    "scroll"
 ];
 
 pub async fn get_all_networks_metadata() -> Value {
