@@ -1,0 +1,12 @@
+{
+    "name": "phala",
+    "network_chain_id": 2035,
+    "wvm_chain_id": 9496,
+    "network_rpc": "https://rpc.phala.network",
+    "wvm_rpc": "https://testnet-rpc.wvm.dev",
+    "block_time": 10,
+    "start_block": 602850,
+    "archiver_address": "0x3cA9f482536b950b2dD3107CAE80032ef1db5683",
+    "backfill_address": "0xc93226FBB3A8f463b1D06993Cd9F1696b9614640",
+    "archive_pool_address": "0x0000000000000000000000000000000000000000"
+}
