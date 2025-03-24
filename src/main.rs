@@ -3,9 +3,8 @@ use crate::utils::schema::Network;
 use crate::utils::server_handlers::{
     handle_all_networks_info, handle_block, handle_block_raw, handle_info, handle_weave_gm,
 };
-use axum::{routing::get, Router};
+use shuttle_axum::axum::{routing::get, Router};
 use tokio::task;
-
 mod utils;
 #[shuttle_runtime::main]
 async fn main(
