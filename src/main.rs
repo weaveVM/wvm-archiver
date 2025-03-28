@@ -23,8 +23,8 @@ async fn main(
     let router = Router::new()
         .route("/", get(handle_weave_gm))
         .route("/v1/info", get(handle_info))
-        .route("/v1/block/:id", get(handle_block))
-        .route("/v1/block/raw/:id", get(handle_block_raw))
+        .route("/v1/block/{id}", get(handle_block))
+        .route("/v1/block/raw/{id}", get(handle_block_raw))
         .route("/v1/all-networks-info", get(handle_all_networks_info));
 
     // poll blocks & sprint archiving in parallel
