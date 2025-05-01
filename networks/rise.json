@@ -1,0 +1,12 @@
+{
+    "name": "RISE Testnet",
+    "network_chain_id": 11155931,
+    "wvm_chain_id": 9496,
+    "network_rpc": "https://testnet.riselabs.xyz",
+    "wvm_rpc": "https://alphanet.load.network",
+    "block_time": 0.1,
+    "start_block":  11043800,
+    "archiver_address": "0x80D73e50Bcc6056724dFd3c61910Be16d947De88",
+    "backfill_address": "0x3B671518023bAe2873A04C612cbad799ED49Fe16",
+    "archive_pool_address": "0x0000000000000000000000000000000000000000"
+}
