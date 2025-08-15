@@ -35,7 +35,7 @@ async fn main() -> anyhow::Result<()> {
     });
 
     // Get port from environment variable or default to 3000
-    let port = std::env::var("PORT").unwrap_or_else(|_| "3000".to_string());
+    let port = std::env::var("PORT").unwrap_or_else(|_| "8000".to_string());
     let addr = format!("0.0.0.0:{}", port);
     
     println!("Server starting on {}", addr);
